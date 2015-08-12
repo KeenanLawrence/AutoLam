@@ -8,6 +8,10 @@ public class Expression {
 		setLabels(l);
 	}
 	
+	public Expression (String e){
+		setExpression(e);
+	}
+	
 	public void setExpression (String e){
 		expression = e;
 	}
