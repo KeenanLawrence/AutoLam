@@ -64,22 +64,35 @@ public class Expression {
 		}
 		
 		//Checks that the start of the expression is valid
-		if (symbols[0] != '^' || (symbols[0] != '(' && symbols[0] != '^')){
-			return false;
-		}
+		if (symbols[0] == '^' || symbols[0] == '('){
+			System.out.println("Yes!");
 		
-		//If it is, check that the rest of the expression is valid
-		else {
-			
+			//If it is, check that the rest of the expression is valid
+	
 			for (int i = 0; i < symbols.length; i++){
-			
+			System.out.println("Yes!");
 			//Start by checking that the symbols are valid
 			if (validSymbols.contains(Character.toString(symbols[i]))){
 				
-				//If it's a lambda or a period, make sure that the next character isn't a lambda, period or closing brace
-				if (symbols[i]=='^' || symbols[i]=='.'){
+				//If it's a lambda, make sure that the next character isn't a lambda, period or closing brace
+				if (symbols[i]=='^'){
 					try {
 							if (symbols[i+1]== '.' || symbols[i+1] == '^' || symbols[i+1] == ')'){
+								check = false;
+								break;
+							}
+					}
+					//Catches an index out of bounds error, but returns false since an expression cannot end with these combination of symbols
+					catch (Exception e1){
+						check = false;
+						break;
+					}
+				}
+				
+				//If it's a period, make sure that the next character isn't a period or closing brace
+				if (symbols[i]=='.'){
+					try {
+							if (symbols[i+1]== '.' || symbols[i+1] == ')'){
 								check = false;
 								break;
 							}
@@ -130,7 +143,6 @@ public class Expression {
 			
 			//If it's not a valid symbol, stop checking and return false
 			else{
-					System.out.println("No!");
 					check = false;
 					break;
 				}
@@ -140,6 +152,9 @@ public class Expression {
 			if (parenthCount != 0){
 				check = false;
 			}
+		}
+		else {
+			return false;
 		}
 		return check;
 	}
