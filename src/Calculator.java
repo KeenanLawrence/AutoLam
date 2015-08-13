@@ -13,7 +13,14 @@ public class Calculator {
 	
 	public String alphaConvert (String expr, char target, char choice){
 		 tempExpr= expr;
-		//TODO
+		if (expr.contains(Character.toString(choice))){
+			System.out.println("Illegal substitution");
+			return tempExpr;
+		}
+		else{
+			//Not as simple as this
+			tempExpr = expr.replace(target, choice);
+		}
 		return tempExpr; 
 	}
 	
