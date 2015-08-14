@@ -12,6 +12,28 @@ public class Calculator {
 		expression = e;
 	}
 	
+	public String stripBrackets (String e){
+		int firstBracket = 0, lastBracket = e.length();
+		
+		if (e.contains("(")){
+			firstBracket = e.indexOf('(');
+			lastBracket = e.lastIndexOf(')');
+		}
+		
+		return e.substring(firstBracket + 1, lastBracket);
+	}
+	
+	public List <String> findBinding (String e){
+		List <String> bound = new ArrayList <String> ();
+		
+		int parenthCount = 0;
+		int index = 0;
+
+		for (int i = 0; i <e.length(); i++){
+			tempExpr = stripBrackets(e);
+		}
+		return bound;
+	}
 	public String alphaConvert (String expr, String target, String choice){
 		List <String> var = new ArrayList <String> ();
 		List <String> args = new ArrayList <String> ();
@@ -21,6 +43,8 @@ public class Calculator {
 			tempExpr = "Illegal substitution";
 			return tempExpr;
 		}
+		
+		//Rework binding
 		else{
 			for (int i = 0; i < expr.length(); i++){
 				if (expr.charAt(i) == '/'){
@@ -46,8 +70,8 @@ public class Calculator {
 			
 			if (bound.get(i).contains(target) && !bound.get(i).contains("(")){
 				tempExpr = bound.get(i).replace(target, choice);
-				System.out.println(tempExpr);
 				System.out.println(bound.get(i));
+				System.out.println(tempExpr);
 				tempExpr = expr.replaceFirst(bound.get(i), tempExpr);
 				break;
 			}

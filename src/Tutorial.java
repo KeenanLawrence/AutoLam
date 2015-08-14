@@ -31,6 +31,7 @@ public class Tutorial {
 					System.out.println(result);
 					break;
 				case 2:
+					//System.out.println(objCal.stripBrackets(expr));
 					//Beta Reduce
 					//TODO
 					break;
