@@ -5,7 +5,7 @@ public class Calculator {
 	String expression;
 	Question question;
 	boolean redundantConversion;
-	List history; 
+	List <String> history; 
 	String tempExpr = "";
 	
 	public Calculator(String e){
@@ -23,15 +23,20 @@ public class Calculator {
 		}
 		else{
 			for (int i = 0; i < expr.length(); i++){
-				if (expr.charAt(i) == '^'){
-					var.add(expr.substring(i+1, expr.indexOf('.', i)));
+				if (expr.charAt(i) == '/'){
+					var.add(expr.substring(i+1, expr.indexOf('.', i))); //change to single character
 				}
-				if (expr.contains(Character.toString('(')) || expr.contains(Character.toString(')'))){
-					if (expr.charAt(i) == '.'){
-					args.add(expr.substring(i+1, expr.indexOf(')', i)));
-					}
+				if (expr.contains(Character.toString('(')) || expr.contains(Character.toString(')')) || expr.contains(Character.toString('/'))){
 					if (expr.charAt(i) == '('){
-						bound.add(expr.substring(i+1, expr.indexOf (')')));
+						bound.add(expr.substring(i+2, expr.indexOf (')')));
+					}
+					if (expr.charAt(i) == '/'){
+						if (expr.contains(Character.toString(' ')) && !expr.contains(Character.toString('('))){
+							bound.add(expr.substring(i+1, expr.indexOf (' ')));
+						}
+						else{
+							bound.add(expr.substring(i+1));
+						}
 					}
 				}
 			}
@@ -41,7 +46,13 @@ public class Calculator {
 			
 			if (bound.get(i).contains(target) && !bound.get(i).contains("(")){
 				tempExpr = bound.get(i).replace(target, choice);
-				tempExpr = expr.replace(bound.get(i), tempExpr);
+				System.out.println(tempExpr);
+				System.out.println(bound.get(i));
+				tempExpr = expr.replaceFirst(bound.get(i), tempExpr);
+				break;
+			}
+			else {
+				tempExpr = "Invalid substitution";
 			}
 			}
 			//tempExpr = expr.replace(target, choice);

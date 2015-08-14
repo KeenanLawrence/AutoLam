@@ -39,6 +39,6 @@ public class Tutorial {
 		else{
 			System.out.println ("The expression was invalid");
 		}
-		//TODO
+		input.close();
 	}
 }

@@ -6,7 +6,7 @@ public class Expression {
 	private String[] labels;
 	
 	//Hard-coded string used to define valid symbols to be used in lambda expressions (should allow for config in final version)
-	private final String validSymbols = "qwertyuiopasdfghjklzxcvbnm. 1234567890()QWERTYUIOPASDFGHJKLZXCVBNM^";
+	private final String validSymbols = "qwertyuiopasdfghjklzxcvbnm. 1234567890()QWERTYUIOPASDFGHJKLZXCVBNM/";
 	
 	//Constructor with labels
 	public Expression (String e, String [] l){
@@ -47,6 +47,7 @@ public class Expression {
 	 *  4.) There cannot be two periods '.' in succession.
 	 *  5.) A lambda cannot come directly before a period.
 	 *  6.) A closing brace cannot come directly after an opening brace.
+	 *  7.) No two spaces in a row.
 	 *  More rules to be added here...
 	 */
 	public boolean validExpression (String e){
@@ -64,7 +65,7 @@ public class Expression {
 		}
 		
 		//Checks that the start of the expression is valid
-		if (symbols[0] == '^' || symbols[0] == '('){
+		if (symbols[0] == '/' || symbols[0] == '('){
 			System.out.println("Yes!");
 		
 			//If it is, check that the rest of the expression is valid
@@ -75,9 +76,9 @@ public class Expression {
 			if (validSymbols.contains(Character.toString(symbols[i]))){
 				
 				//If it's a lambda, make sure that the next character isn't a lambda, period or closing brace
-				if (symbols[i]=='^'){
+				if (symbols[i]=='/'){
 					try {
-							if (symbols[i+1]== '.' || symbols[i+1] == '^' || symbols[i+1] == ')'){
+							if (symbols[i+1]== '.' || symbols[i+1] == '/' || symbols[i+1] == ')'){
 								check = false;
 								break;
 							}
@@ -134,6 +135,20 @@ public class Expression {
 					}
 					catch (Exception e3){
 						//Index out of bounds
+					}
+				}
+				
+				//Check for double spacing
+				if (symbols[i] == ' '){
+					try {
+							if (symbols[i+1]== ' '){
+								check = false;
+								break;
+							}
+					}
+					catch (Exception e3){
+						//TODO
+						//Remove the space
 					}
 				}
 				
