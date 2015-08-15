@@ -25,9 +25,8 @@ public class Tutorial {
 					String target = input.nextLine();
 					System.out.println("Enter the variable you want to replace it with");
 					String choice = input.nextLine();
-					
 					result = objCal.alphaConvert(expr, target, choice);
-					
+					System.out.println("Result");
 					System.out.println(result);
 					break;
 				case 2:

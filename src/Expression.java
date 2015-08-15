@@ -6,7 +6,13 @@ public class Expression {
 	private String[] labels;
 	
 	//Hard-coded string used to define valid symbols to be used in lambda expressions (should allow for config in final version)
-	private final String validSymbols = "qwertyuiopasdfghjklzxcvbnm. 1234567890()QWERTYUIOPASDFGHJKLZXCVBNM/";
+	private final String alpha = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+	//private final String numeric = "1234567890";
+	private final String special = ". ()";
+	private final String lambda = "/";
+	
+	//Numeric not included for prototype
+	private final String validSymbols = alpha + special + lambda;
 	
 	//Constructor with labels
 	public Expression (String e, String [] l){
@@ -50,7 +56,7 @@ public class Expression {
 	 *  7.) No two spaces in a row.
 	 *  More rules to be added here...
 	 */
-	public boolean validExpression (String e){
+	public boolean validExpression (String expr){
 
 		boolean check = false;
 		
@@ -59,107 +65,110 @@ public class Expression {
 		int parenthCount = 0;
 		
 		//Breaks the expression into a collection of symbols
-		char [] symbols = new char [e.length()];
-		for (int i = 0; i < e.length(); i++){
-			symbols [i] = e.charAt(i);
+		char [] symbols = new char [expr.length()];
+		for (int i = 0; i < expr.length(); i++){
+			symbols [i] = expr.charAt(i);
 		}
 		
 		//Checks that the start of the expression is valid
-		if (symbols[0] == '/' || symbols[0] == '('){
-			System.out.println("Yes!");
+		if (symbols[0] != '/' && symbols[0] != '('){
+			System.out.println("No!");
+			return false;
+		}
 		
+		else{
 			//If it is, check that the rest of the expression is valid
-	
 			for (int i = 0; i < symbols.length; i++){
-			System.out.println("Yes!");
-			//Start by checking that the symbols are valid
-			if (validSymbols.contains(Character.toString(symbols[i]))){
 				
-				//If it's a lambda, make sure that the next character isn't a lambda, period or closing brace
-				if (symbols[i]=='/'){
-					try {
-							if (symbols[i+1]== '.' || symbols[i+1] == '/' || symbols[i+1] == ')'){
+				//Start by checking that the symbols are valid
+				if (validSymbols.contains(Character.toString(symbols[i]))){
+					//Determines what to do with a given symbol
+					switch (symbols [i]){
+						case '/':
+							try{
+								//Checks if the next character is a variable
+								if (!alpha.contains(Character.toString(symbols [i+1]))){
+									check = false;
+									break;
+								}
+								//Enforces single name variable, like x and not x1
+								if (symbols [i+2] != '.'){
+									check = false;
+									break;
+								}
+								break;
+							}
+							//Expressions cannot end with a lambda or lambda <variable>
+							catch (Exception e){
 								check = false;
 								break;
 							}
+					
+						case '.':
+							try{
+								if (!alpha.contains(Character.toString(symbols[i-1]))){
+									check = false;
+									break;
+								}
+								if (!alpha.contains(Character.toString(symbols[i+1])) && symbols [i+1] != '/'){
+									check = false;
+									break;
+								}
+								break;
+							}
+							catch (Exception e){
+								check = false;
+								break;
+							}
+						
+						case ' ':
+							try{
+								if (symbols [i+1] == ' ' || symbols [i+1] == ')' || symbols [i+1] == '.'){
+									check = false;
+									break;
+								}
+								break;
+							}
+							catch (Exception e){
+								setExpression(expr.trim());
+								break;
+							}
+						
+						case '(':
+							parenthCount ++;
+							try{
+								if (symbols [i+1] != '/' || symbols [i+1] == '('){
+									check = false;
+									break;
+								}
+								break;
+							}
+							catch (Exception e){
+								check = false;
+								break;
+							}
+						
+						case ')':
+							parenthCount --;
+							try{
+								if (symbols [i+1] != ' ' || symbols [i+1] == ')'){
+									check = false;
+									break;
+								}
+								break;
+							}
+							catch (Exception e){
+								//Do nothing, this might be the closing brace of the entire expression. We'll strip braces later.
+							}
 					}
-					//Catches an index out of bounds error, but returns false since an expression cannot end with these combination of symbols
-					catch (Exception e1){
+					//This is to verify that the symbol at i is a valid symbol
+					check = true;
+				}
+
+				//If it's not a valid symbol, stop checking and return false
+				else{
 						check = false;
 						break;
-					}
-				}
-				
-				//If it's a period, make sure that the next character isn't a period or closing brace
-				if (symbols[i]=='.'){
-					try {
-							if (symbols[i+1]== '.' || symbols[i+1] == ')'){
-								check = false;
-								break;
-							}
-					}
-					//Catches an index out of bounds error, but returns false since an expression cannot end with these combination of symbols
-					catch (Exception e1){
-						check = false;
-						break;
-					}
-				}
-				
-				//If it's an opening brace, the next character cannot be a period or closing brace
-				if (symbols[i] == '('){
-					parenthCount++;
-					
-					try {
-							if (symbols[i+1] == '.' || symbols[i+1] == ')'){
-								check = false;
-								break;
-							}
-					}
-					//Catches index out of bounds exception but returns false since an expression cannot end with a closing brace.
-					catch (Exception e2){
-						check = false;
-						break;
-					}
-					
-				}
-				
-				//If it's an closing brace, the next character cannot be a period
-				if (symbols[i] == ')'){
-					parenthCount--;
-					
-					try {
-							if (symbols[i+1]== '.'){
-								check = false;
-								break;
-							}
-					}
-					catch (Exception e3){
-						//Index out of bounds
-					}
-				}
-				
-				//Check for double spacing
-				if (symbols[i] == ' '){
-					try {
-							if (symbols[i+1]== ' '){
-								check = false;
-								break;
-							}
-					}
-					catch (Exception e3){
-						//TODO
-						//Remove the space
-					}
-				}
-				
-				//This is to verify that the symbol at i is a valid symbol
-				check = true;
-			}
-			
-			//If it's not a valid symbol, stop checking and return false
-			else{
-					check = false;
-					break;
 				}
 			}
 			
@@ -167,10 +176,8 @@ public class Expression {
 			if (parenthCount != 0){
 				check = false;
 			}
+			
+			return check;
 		}
-		else {
-			return false;
-		}
-		return check;
 	}
 }

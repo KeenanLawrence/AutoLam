@@ -3,6 +3,7 @@ import java.util.*;
 public class Calculator {
 	//Expression expression;
 	String expression;
+	List <String> bound; 
 	Question question;
 	boolean redundantConversion;
 	List <String> history; 
@@ -10,67 +11,71 @@ public class Calculator {
 	
 	public Calculator(String e){
 		expression = e;
+		bound = new ArrayList <String> ();
 	}
 	
 	public String stripBrackets (String e){
 		int firstBracket = 0, lastBracket = e.length();
 		
-		if (e.contains("(")){
+		if (e.indexOf("(") == 0){
 			firstBracket = e.indexOf('(');
 			lastBracket = e.lastIndexOf(')');
-		}
 		
-		return e.substring(firstBracket + 1, lastBracket);
+			return e.substring(firstBracket + 1, lastBracket);
+		}
+		else{
+			return "Halt";
+		}
 	}
 	
-	public List <String> findBinding (String e){
-		List <String> bound = new ArrayList <String> ();
-		
+	public void findBinding (String e){
+		String [] tempBound;
 		int parenthCount = 0;
 		int index = 0;
-
-		for (int i = 0; i <e.length(); i++){
-			tempExpr = stripBrackets(e);
+		
+		while (!stripBrackets(e).equals("Halt")){
+			e = stripBrackets(e);
 		}
-		return bound;
+		
+		
+		if (e.contains(" ")){
+			tempBound = e.split(" ");
+			
+			for (int i = 0; i < tempBound.length; i++){
+				if(tempBound[i].contains("/")){
+					if (tempBound[i].contains("(")){
+						tempBound[i] = stripBrackets(tempBound[i]);
+						bound.add(tempBound[i]);
+					}
+					else{
+						bound.add(tempBound[i]);
+					}
+				}
+			}
+		}
+		else{
+			bound.add(e);
+		}
+		for (int i = 0; i <bound.size(); i++){
+			System.out.println("In bound");
+			System.out.println(bound.get(i));
+		}
 	}
 	public String alphaConvert (String expr, String target, String choice){
-		List <String> var = new ArrayList <String> ();
-		List <String> args = new ArrayList <String> ();
-		List <String> bound = new ArrayList <String> ();
+		
+		findBinding(expr);
 		
 		if (expr.contains(choice) || !expr.contains(target)){
 			tempExpr = "Illegal substitution";
 			return tempExpr;
 		}
 		
-		//Rework binding
-		else{
-			for (int i = 0; i < expr.length(); i++){
-				if (expr.charAt(i) == '/'){
-					var.add(expr.substring(i+1, expr.indexOf('.', i))); //change to single character
-				}
-				if (expr.contains(Character.toString('(')) || expr.contains(Character.toString(')')) || expr.contains(Character.toString('/'))){
-					if (expr.charAt(i) == '('){
-						bound.add(expr.substring(i+2, expr.indexOf (')')));
-					}
-					if (expr.charAt(i) == '/'){
-						if (expr.contains(Character.toString(' ')) && !expr.contains(Character.toString('('))){
-							bound.add(expr.substring(i+1, expr.indexOf (' ')));
-						}
-						else{
-							bound.add(expr.substring(i+1));
-						}
-					}
-				}
-			}
-			
-			for (int i = 0; i < bound.size(); i++){
-				System.out.println(bound.get(i));
-			
+		for (int i = 0; i < bound.size(); i++){
 			if (bound.get(i).contains(target) && !bound.get(i).contains("(")){
 				tempExpr = bound.get(i).replace(target, choice);
+				System.out.println("Target");
 				System.out.println(bound.get(i));
+				System.out.println("Replacement");
 				System.out.println(tempExpr);
 				tempExpr = expr.replaceFirst(bound.get(i), tempExpr);
 				break;
@@ -80,7 +85,6 @@ public class Calculator {
 			}
 			}
 			//tempExpr = expr.replace(target, choice);
-		}
 		return tempExpr; 
 	}
 	
