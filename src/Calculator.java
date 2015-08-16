@@ -73,7 +73,7 @@ public class Calculator {
 	}
 	
 	public String alphaConvert (String expr, String target, String choice){
-		
+		tempExpr = "";
 		findBinding(expr);
 		
 		//If the choice of substitution is already in the expression,
@@ -84,6 +84,7 @@ public class Calculator {
 		}
 		
 		//For debugging purposes
+		/*
 		for (int i = 0; i < func.size(); i++){
 			System.out.println("Func");
 			System.out.println(func.get(i));
@@ -92,6 +93,7 @@ public class Calculator {
 			System.out.println("Bound");
 			System.out.println(bound.get(i));
 		}
+		*/
 		
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
@@ -101,9 +103,8 @@ public class Calculator {
 					if (bound.get(k).contains(target)){
 						//Replace the first occurrence of the function name
 						tempExpr = expr.replaceFirst(target, func.get(i).replace(target, choice));
-						System.out.println(tempExpr);
 						//Replace the bounded variable name
-						tempExpr = tempExpr.replaceFirst(target, bound.get(k).replace(target, choice));
+						tempExpr = tempExpr.replaceFirst(target, choice);
 						break;
 					}
 				}
@@ -118,6 +119,9 @@ public class Calculator {
 					}	
 				}
 			}
+		}
+		if(tempExpr.equals("")){
+			tempExpr = "Illegal Substitution";
 		}
 		return tempExpr; 
 	}
