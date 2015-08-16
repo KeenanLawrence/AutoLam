@@ -1,5 +1,7 @@
+//Importing of necessary packages
 import java.util.*;
 
+//Class definition
 public class Tutorial {
 	public static void main (String [] args){
 		
