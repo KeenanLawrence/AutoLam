@@ -1,0 +1,1 @@
+INDEX VERSION 1.126+/home/techsupport/CS3/AutoLam/src/.metadata/.plugins/org.eclipse.jdt.core
