@@ -3,17 +3,21 @@ import java.util.*;
 public class Calculator {
 	//Expression expression;
 	String expression;
-	List <String> bound; 
 	Question question;
 	boolean redundantConversion;
 	List <String> history; 
-	String tempExpr = "";
+	List <String> func; 
+	List <String> arg; 
+	String tempExpr;
 	
 	public Calculator(String e){
 		expression = e;
-		bound = new ArrayList <String> ();
+		func = new ArrayList <String> ();
+		arg = new ArrayList <String> ();
+		tempExpr = "";
 	}
 	
+	//Method to remove the outermost brackets in the expression
 	public String stripBrackets (String e){
 		int firstBracket = 0, lastBracket = e.length();
 		
@@ -29,7 +33,6 @@ public class Calculator {
 	}
 	
 	public void findBinding (String e){
-		String [] tempBound;
 		int parenthCount = 0;
 		int index = 0;
 		
@@ -37,32 +40,36 @@ public class Calculator {
 			e = stripBrackets(e);
 		}
 		
-		
-		if (e.contains(" ")){
-			tempBound = e.split(" ");
-			
-			for (int i = 0; i < tempBound.length; i++){
-				if(tempBound[i].contains("/")){
-					if (tempBound[i].contains("(")){
-						tempBound[i] = stripBrackets(tempBound[i]);
-						bound.add(tempBound[i]);
+		for (int i = 0; i < e.length(); i++){
+			if (e.charAt(i) == '/'){
+				func.add(Character.toString(e.charAt(i+1)));
+			}
+			if (e.charAt(i) == '.'){
+				if (e.charAt(i+1)  == '('){
+					index = i + 1;
+					parenthCount++;
+				
+				while (parenthCount != 0){
+					index++;
+					if (e.charAt(index) == '('){
+						parenthCount++;
 					}
-					else{
-						bound.add(tempBound[i]);
+					if (e.charAt(index) == ')'){
+						parenthCount--;
 					}
+				}
+				arg.add(e.substring(i+1, index));
+				}
+				else{
+					arg.add(e.substring(i+1));
+					
 				}
 			}
 		}
-		else{
-			bound.add(e);
-		}
-		for (int i = 0; i <bound.size(); i++){
-			System.out.println("In bound");
-			System.out.println(bound.get(i));
-		}
 	}
 	public String alphaConvert (String expr, String target, String choice){
-		
+		boolean random = false;
+		tempExpr = "";
 		findBinding(expr);
 		
 		if (expr.contains(choice) || !expr.contains(target)){
@@ -70,21 +77,32 @@ public class Calculator {
 			return tempExpr;
 		}
 		
-		for (int i = 0; i < bound.size(); i++){
-			if (bound.get(i).contains(target) && !bound.get(i).contains("(")){
-				tempExpr = bound.get(i).replace(target, choice);
-				System.out.println("Target");
-				System.out.println(bound.get(i));
-				System.out.println("Replacement");
-				System.out.println(tempExpr);
-				tempExpr = expr.replaceFirst(bound.get(i), tempExpr);
-				break;
+		//For debugging purposes
+		/*
+		for (int i = 0; i < func.size(); i++){
+			System.out.println("Func");
+			System.out.println(func.get(i));
+		}
+		for (int i = 0; i < arg.size(); i++){
+			System.out.println("Arg");
+			System.out.println(arg.get(i));
+		}
+		*/
+		
+		for (int i = 0; i < func.size(); i++){
+			
+			if (func.get(i).contains(target) && arg.get(i).contains(target)){
+				tempExpr = expr.replaceFirst(target, func.get(i).replace(target, choice));
+				tempExpr = tempExpr.replaceFirst(target, choice);
+				random = true;
+				
 			}
-			else {
-				tempExpr = "Invalid substitution";
+			if (!func.get(i).contains(target) && arg.get(i).contains(target) && random){
+				tempExpr = tempExpr.replace(target, choice);
 			}
-			}
-			//tempExpr = expr.replace(target, choice);
+			
+			
+		}
 		return tempExpr; 
 	}
 	
@@ -99,5 +117,4 @@ public class Calculator {
 		//TODO
 		return tempExpr;
 	}
-	//This is a change to check if branches are cool
 }
