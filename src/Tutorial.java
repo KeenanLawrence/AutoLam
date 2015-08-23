@@ -21,9 +21,9 @@ public class Tutorial {
 			String expr = input.nextLine(); 
 			
 			objExpression = new Expression (expr);
-			objCal = new Calculator (expr);
+			objCal = new Calculator (objExpression.getExpression());
 			
-			if (objExpression.validExpression(expr) == true){
+			if (objExpression.validExpression(objExpression.getExpression()) == true){
 				System.out.println ("Valid expression");
 				System.out.println();
 				switch (option){
@@ -32,12 +32,12 @@ public class Tutorial {
 						String target = input.nextLine();
 						System.out.println("Enter the variable you want to replace it with");
 						String choice = input.nextLine();
-						result = objCal.alphaConvert(expr, target, choice);
+						result = objCal.alphaConvert(objExpression.getExpression(), target, choice);
 						System.out.println("Result");
 						System.out.println(result);
 						break;
 					case 2:
-						String oldResult=objCal.betaReduce(expr);
+						String oldResult=objCal.betaReduce(objExpression.getExpression());
 						System.out.println(oldResult);
 						while(true){					
 							String newResult = objCal.betaReduce(oldResult);
@@ -57,8 +57,6 @@ public class Tutorial {
 			System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Quit");
 			option = input.nextInt();
 		}
-		
-		
 		input.close();
 	}
 }
