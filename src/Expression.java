@@ -22,7 +22,7 @@ public class Expression {
 	
 	//Constructor without labels (used in prototype)
 	public Expression (String e){
-		setExpression(e);
+		setExpression(e.trim());
 	}
 	
 	public void setExpression (String e){
@@ -46,9 +46,6 @@ public class Expression {
 		return labels;
 	}
 	
-	public String getAlpha (){
-		return alpha;
-	}
 	/*	Method to check if an expression is a valid lambda expression.
 	 *  1.) It may only contain the predefined symbols.
 	 *  2.) Parentheses need to match up.
@@ -61,8 +58,6 @@ public class Expression {
 	 */
 	public boolean validExpression (String expr){
 
-		boolean check = false;
-		
 		//Keeps track of how many opening and closing braces there are.
 		//If the count is positive, there's excess opening braces. Zero for equality, negative for excess closing braces. 
 		int parenthCount = 0;
@@ -72,107 +67,98 @@ public class Expression {
 		
 		for (int i = 0; i < expr.length(); i++){
 			symbols [i] = expr.charAt(i);
+			if (!validSymbols.contains(Character.toString(symbols[i]))){
+				return false;
+			}
+		}
+		
+		//Checks that the start of the expression is valid
+		if (symbols[0] == '.' || symbols[0] == ')'){
+			return false;
 		}
 		
 		//If it is, check that the rest of the expression is valid
 		for (int i = 0; i < symbols.length; i++){
-				
-			//Start by checking that the symbols are valid
-			if (validSymbols.contains(Character.toString(symbols[i]))){
-				//Determines what to do with a given symbol
-				switch (symbols [i]){
-					case '/':
-						try{
-							//Checks if the next character is a variable
-							if (!alpha.contains(Character.toString(symbols [i+1]))){
-								check = false;
-								break;
-							}
-							//Enforces single name variable, like x and not x1
-							if (symbols [i+2] != '.'){
-								check = false;
-								break;
-							}
-							break;
+				switch (symbols[i]){
+				case '/':
+					try{
+						if (symbols[i+1] == '/' || symbols[i+1] == ')' || symbols[i+1] == '.' || symbols[i+1] == ' '){
+							return false;
 						}
-						//Expressions cannot end with a lambda or lambda <variable>
-						catch (Exception e){
-							check = false;
-							break;
+						if (symbols[i+2] != '.'){
+							return false;
 						}
-				
-					case '.':
-						try{
-							if (!alpha.contains(Character.toString(symbols[i-1]))){
-								check = false;
-								break;
-							}
-							if (!alpha.contains(Character.toString(symbols[i+1])) && symbols [i+1] != '/'){
-								check = false;
-								break;
-							}
-							break;
-						}
-						catch (Exception e){
-							check = false;
-							break;
-						}
-						
-					case ' ':
-						try{
-							if (symbols [i+1] == ' ' || symbols [i+1] == ')' || symbols [i+1] == '.'){
-								check = false;
-								break;
-							}
-							break;
-						}
-						catch (Exception e){
-							setExpression(expr.trim());
-							break;
-						}
-					
-					case '(':
-						parenthCount ++;
-						try{
-							if (symbols [i+1] != '/' || symbols [i+1] == '('){
-								check = false;
-								break;
-							}
-							break;
-						}
-						catch (Exception e){
-							check = false;
-							break;
-						}
-					
-					case ')':
-						parenthCount --;
-						try{
-							if (symbols [i+1] != ' ' || symbols [i+1] == ')'){
-								check = false;
-								break;
-							}
-							break;
-						}
-						catch (Exception e){
-							//Do nothing, this might be the closing brace of the entire expression. We'll strip braces later.
-						}
-				}
-				//This is to verify that the symbol at i is a valid symbol
-				check = true;
-			}
-				//If it's not a valid symbol, stop checking and return false
-			else{
-					check = false;
+					}
+					catch (Exception e){
+						return false;
+					}
 					break;
-			}
+				case '.':
+					try{
+						if (symbols[i+1] == ')' || symbols[i+1] == ' ' || symbols[i+1] == '.'){
+							return false;
+						}
+					}
+					catch (Exception e){
+						return false;
+					}
+					try{
+						if(symbols[i+2] == '.'){
+							return false;
+						}
+					}
+					catch (Exception e){
+						//Do nothing, it might be a simple expression such as /x.x
+					}
+					break;
+				case '(':
+					parenthCount++;
+					try{
+						if (symbols[i+1] == ')' || symbols[i+1] == '.' || symbols[i+1] == ' '){
+							return false;
+						}
+					}
+					catch (Exception e){
+						return false;
+					}
+					break;
+				case ')':
+					parenthCount--;
+					try{
+						if (symbols[i+1] == ' ' || symbols[i+1] == ')'){
+						}
+						else{
+							return false;
+						}
+					}
+					catch (Exception e){
+						//Do nothing, might be at end of String
+					}
+					break;
+				case ' ':
+					try{
+						if (symbols[i+1] == ' ' || symbols[i+1] == ')' || symbols[i+1] == '.'){
+							return false;
+						}
+					}
+					catch (Exception e){
+						//Do nothing, expression might end with whitespace. Should be trimmed by expr.trim()
+					}
+					break;
+				}
 		}
-		
 		//If the number of closing braces and opening braces don't match up, it's invalid.
 		if (parenthCount != 0){
-			check = false;
+			return false;
 		}
-		
-		return check;
+		return true;
 	}
+	
+	//Functionality to be decided
+	/*
+	public String removeWhitespace (String expr, int index){
+		String tempExpr = expr.substring(index);
+		return tempExpr;
+	}
+	*/
 }
