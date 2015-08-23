@@ -24,6 +24,7 @@ public class Calculator {
 			firstBracket = e.indexOf('(');
 			lastBracket = e.lastIndexOf(')');
 		
+			System.out.println(e.substring(firstBracket + 1, lastBracket));
 			return e.substring(firstBracket + 1, lastBracket);
 		}
 		else{
@@ -35,11 +36,6 @@ public class Calculator {
 	public void findBinding (String e){
 		int parenthCount = 0;
 		int index = 0;
-		
-		//Remove all outermost brackets
-		while (!stripBrackets(e).equals("Halt")){
-			e = stripBrackets(e);
-		}
 		
 		//Loop through the entire string and determine what to do 
 		for (int i = 0; i < e.length(); i++){
@@ -66,7 +62,6 @@ public class Calculator {
 					if (e.charAt(i+1) != '/'){
 						bound.add(e.substring(i+1));
 					}
-					
 				}
 			}
 		}
