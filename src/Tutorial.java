@@ -11,10 +11,10 @@ public class Tutorial {
 		
 		Scanner input = new Scanner (System.in);
 		
-		System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Auto Alpha Convert \n4. Quit");
+		System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Auto Alpha Convert \n4. Alpha Equivalence \n5. Quit");
 		int option = input.nextInt();
 
-		while(option!=4){
+		while(option!=5){
 			input.nextLine();
 			
 			System.out.println ("Please enter an expression:");
@@ -23,8 +23,13 @@ public class Tutorial {
 			objExpression = new Expression (expr);
 			objCal = new Calculator (objExpression.getExpression());
 			
+			System.out.println();
+			System.out.println("Autocorrecting Expression...");
+			objExpression.setExpression(objExpression.autocorrectExpression(expr));
+			
 			if (objExpression.validExpression(objExpression.getExpression()) == true){
 				System.out.println ("Valid expression");
+				
 				System.out.println();
 				switch (option){
 					case 1:
@@ -50,13 +55,23 @@ public class Tutorial {
 						break;
 					case 3:
 						objCal.autoAlphaConvert(objExpression.getExpression());
+						break;
+					case 4:
+						System.out.println("Enter the second expression: ");
+						String expr2 = input.nextLine();
+						if (objCal.alphaEquivalent(objExpression.getExpression(), expr2)){
+							System.out.println("The expressions are equivalent");
+						}
+						else{
+							System.out.println("The expressions are not equivalent");
+						}
 				}
 			}
 			else{
 				System.out.println ("The expression was invalid");
 			}
 			System.out.println();
-			System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Auto Alpha Convert \n4. Quit");
+			System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Auto Alpha Convert \n4. Alpha Equivalence \n5. Quit");
 			option = input.nextInt();
 		}
 		input.close();
