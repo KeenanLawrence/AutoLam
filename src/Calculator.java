@@ -16,6 +16,14 @@ public class Calculator {
 		tempExpr = "";
 	}
 	
+	public List <String> getFunc (){
+		return func;
+	}
+	
+	public List <String> getBound(){
+		return bound;
+	}
+	
 	//Method to find function names and things that are bound to the function
 	public void findBinding (String e){
 		func = new ArrayList <String> ();
@@ -133,7 +141,8 @@ public class Calculator {
 				tempExpr = tempExpr.replaceFirst(bound.get(i), bound.get(i).replace(target, choice));
 				break;
 			}
-					
+			
+			//If it's a function and there's no matching bound variable, just change the function name
 			if (func.get(i).contains(target) && !bound.get(i).contains(target)){
 						tempExpr = expr.replaceFirst(target, choice);
 			}
@@ -145,6 +154,7 @@ public class Calculator {
 		return tempExpr; 
 	}
 	
+	//TODO
 	public String autoAlphaConvert(String expr){
 		tempExpr = "";
 		findBinding(expr);
@@ -167,10 +177,43 @@ public class Calculator {
 		return tempExpr;
 	}
 	
+	//TODO
+	//Works on basic cases
+	public boolean alphaEquivalent (String expr1, String expr2){
+		boolean equiv = false;
+		tempExpr = "";
+		
+		if (expr1.equals(expr2)){
+			return true;
+		}
+		
+		Calculator objCal1 = new Calculator (expr1);
+		Calculator objCal2 = new Calculator (expr2);
+		
+		objCal1.findBinding(expr1);
+		objCal2.findBinding(expr2);
+		List <String> tempFunc1 = objCal1.getFunc();
+		List <String> tempFunc2 = objCal2.getFunc();
+		
+		for (int i = 0; i < tempFunc1.size(); i++){
+			if (!tempFunc1.get(i).contains(tempFunc2.get(i))){
+				for (int k = 0; k < tempFunc2.get(i).length(); k++)
+				if(Expression.getAlpha().contains(Character.toString(tempFunc2.get(i).charAt(k)))){
+					tempExpr = alphaConvert(expr1, Character.toString(tempFunc1.get(i).charAt(i)), Character.toString(tempFunc2.get(i).charAt(k)));
+					break;
+				}
+			}
+		}
+		if (tempExpr.equals(expr2)){
+			return true;
+		}
+		return equiv;
+	}
+	
 	//does what you think it does (actually probably doesn't though)
 	public String betaReduce (String expr){
 		tempExpr = expr;
-		int fSpace = findRelevantSpace(expr,0);//this space seperates a function from its argument in an application
+		int fSpace = findRelevantSpace(expr,0);//this space separates a function from its argument in an application
 		if(fSpace==-1){//case where this is not an application
 			int firstBrace=expr.indexOf('(');
 			if(firstBrace==-1){
@@ -215,16 +258,11 @@ public class Calculator {
 					String secondPart = tempExpr.substring(argSpace);
 					String firstPart=betaReduce(tempExpr.substring(0, argSpace));
 					tempExpr=firstPart+secondPart;
-				}
-				
-			}
-			
-					
+				}	
+			}		
 		}
-		
 		return tempExpr;
 	}
-	
 	
 	public int findMatchingBrace(String expr, int pos){
 		int out = -1;
@@ -260,7 +298,7 @@ public class Calculator {
 			}
 		}
 		//System.out.println("accommodating for " + (point-removed) + " bracket deletions");
-		out=e.substring((tempPoint-removed));//accomodates for the brackets that we have already deleted
+		out=e.substring((tempPoint-removed));//accommodates for the brackets that we have already deleted
 		return out;
 	}
 	
