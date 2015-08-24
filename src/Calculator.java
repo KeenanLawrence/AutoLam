@@ -16,57 +16,90 @@ public class Calculator {
 		tempExpr = "";
 	}
 	
-	//Method to remove the outermost brackets in the expression
-	public String stripBrackets (String e){
-		int firstBracket = 0, lastBracket = e.length();
-		
-		if (e.indexOf("(") == 0){
-			firstBracket = e.indexOf('(');
-			lastBracket = e.lastIndexOf(')');
-		
-			System.out.println(e.substring(firstBracket + 1, lastBracket));
-			return e.substring(firstBracket + 1, lastBracket);
-		}
-		else{
-			return "Halt";
-		}
-	}
-	
 	//Method to find function names and things that are bound to the function
 	public void findBinding (String e){
+		func = new ArrayList <String> ();
+		bound = new ArrayList <String> ();
+		tempExpr = "";
+		
+		//Used to keep track of parentheses
 		int parenthCount = 0;
-		int index = 0;
+		
+		//Variable used for linking functions with its bound variables
+		int index = -1;
+		//Secondary counter to link multiple functions to a set of bound variables
+		int k;
 		
 		//Loop through the entire string and determine what to do 
 		for (int i = 0; i < e.length(); i++){
-			if (e.charAt(i) == '/'){
-				func.add(Character.toString(e.charAt(i+1)));
-			}
-			if (e.charAt(i) == '.'){
-				if (e.charAt(i+1)  == '('){
-					index = i + 1;
-					parenthCount++;
-				
-				while (parenthCount != 0){
+			try{
+				//If it's a lambda,
+				if (e.charAt(i) == '/'){
 					index++;
-					if (e.charAt(index) == '('){
-						parenthCount++;
+					//add it to the list of functions
+					func.add(index, Character.toString(e.charAt(i+1)));
+				
+					//Move to the next symbol in the list
+					k=i+1;
+					//If you don't encounter a whitespace,
+					while (e.charAt(k) != ' '){
+						//and the symbol is a lambda, then it's part of the same set of functions that 
+						//the lambda before it was part of. (eg /x./y.x , here x and y are part of the same set
+						//of functions, and they're both binding x
+						if (e.charAt(k) == '/'){
+							//This section is important for regex pattern matching
+							if (e.charAt(k-1) == '('){
+								func.set(index, func.get(index) + ".\\(/" + Character.toString(e.charAt(k+1)));
+							}
+							else{
+								func.set(index, func.get(index) + "./" + Character.toString(e.charAt(k+1)));
+							}
+						}
+						//If it was a period, determine the things that are bound to it.
+						if (e.charAt(k) == '.'){
+							if (e.charAt(k+2) == ' '){
+								bound.add(index, Character.toString(e.charAt(k+1)));
+							}
+							//If it is enclosed in parentheses, include everything up until that point.
+							else{
+								if (e.charAt(k+1) == '(' && e.charAt(k+2) != '/'){
+									int startBound = k+2;
+									int endBound = k+2;
+									parenthCount = 0;
+									parenthCount++;
+									while (parenthCount != 0){
+										if (e.charAt(endBound) == '('){
+											parenthCount++;
+										}
+										if (e.charAt(endBound) == ')'){
+											parenthCount--;
+										}
+										endBound++;
+									}
+									bound.add(index, e.substring(startBound, endBound - 1));
+								}
+								//It also may have occurred towards the end of a section (eg /x.(/y.y))
+								else if (e.charAt(k+2) == ')'){
+									bound.add(index, Character.toString(e.charAt(k+1)));
+								}
+							}
+						}
+						//Move to the next symbol in the list
+						k++;
 					}
-					if (e.charAt(index) == ')'){
-						parenthCount--;
-					}
+					//Move to the next section that will contain a lambda
+					i=k;
 				}
-				bound.add(e.substring(i+2, index));
-				}
-				else{
-					if (e.charAt(i+1) != '/'){
-						bound.add(e.substring(i+1));
-					}
-				}
+			}
+			//This catches the index out of bounds for checking for whitespace. All other possibilities are taken care of
+			//by validExpression() in Expression class
+			catch (Exception ex){
+				bound.add(index, Character.toString(e.charAt(i+3)));
 			}
 		}
 	}
-	
+				
+	//The method that does the alpha conversion if given a target and a replacement (called choice)
 	public String alphaConvert (String expr, String target, String choice){
 		tempExpr = "";
 		findBinding(expr);
@@ -92,33 +125,46 @@ public class Calculator {
 		
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
-			if (func.get(i).contains(target)){
+			if (func.get(i).contains(target) && bound.get(i).contains(target)){
 				//If it is, check if there's a bounded variable of the same name
-				for (int k = 0; k < bound.size(); k++){
-					if (bound.get(k).contains(target)){
-						//Replace the first occurrence of the function name
-						tempExpr = expr.replaceFirst(target, func.get(i).replace(target, choice));
-						//Replace the bounded variable name
-						tempExpr = tempExpr.replaceFirst(target, choice);
-						break;
-					}
-				}
+				//Replace the first occurrence of the function name
+				tempExpr = expr.replaceFirst(func.get(i), func.get(i).replace(target, choice));
+				//Replace the bounded variable name
+				tempExpr = tempExpr.replaceFirst(bound.get(i), bound.get(i).replace(target, choice));
+				break;
 			}
-			
-			if (func.get(i).contains(target)){
-				//Check if there's a bounded variable of the same name. If not, just change the function name
-				for (int k = 0; k < bound.size(); k++){
-					if (!bound.get(k).contains(target)){
+					
+			if (func.get(i).contains(target) && !bound.get(i).contains(target)){
 						tempExpr = expr.replaceFirst(target, choice);
-						break;
-					}	
-				}
 			}
 		}
+		
 		if(tempExpr.equals("")){
 			tempExpr = "Illegal Substitution";
 		}
 		return tempExpr; 
+	}
+	
+	public String autoAlphaConvert(String expr){
+		tempExpr = "";
+		findBinding(expr);
+		String funcNames [] = new String [func.size()];
+		int index = 0;
+		boolean check = false;
+		for (int i = 0; i < func.size(); i++){
+			funcNames [i] = func.get(i);
+		}
+		
+		while (index + 1 < func.size()){
+			if (funcNames[index+1].contains(funcNames[index])){
+				check = true;
+			}
+			index++;
+		}
+		if (check){
+			System.out.println("It worked");
+		}
+		return tempExpr;
 	}
 	
 	//does what you think it does (actually probably doesn't though)
