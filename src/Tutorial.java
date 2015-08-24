@@ -11,10 +11,10 @@ public class Tutorial {
 		
 		Scanner input = new Scanner (System.in);
 		
-		System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Quit");
+		System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Auto Alpha Convert \n4. Quit");
 		int option = input.nextInt();
 
-		while(option!=3){
+		while(option!=4){
 			input.nextLine();
 			
 			System.out.println ("Please enter an expression:");
@@ -48,13 +48,15 @@ public class Tutorial {
 							System.out.println(oldResult);
 						}
 						break;
+					case 3:
+						objCal.autoAlphaConvert(objExpression.getExpression());
 				}
 			}
 			else{
 				System.out.println ("The expression was invalid");
 			}
 			System.out.println();
-			System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Quit");
+			System.out.println ("Please select an option: \n1. Alpha Conversion \n2. Beta Reduction \n3. Auto Alpha Convert \n4. Quit");
 			option = input.nextInt();
 		}
 		input.close();
