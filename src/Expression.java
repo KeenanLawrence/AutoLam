@@ -6,7 +6,7 @@ public class Expression {
 	private String[] labels;
 	
 	//Hard-coded string used to define valid symbols to be used in lambda expressions (should allow for config in final version)
-	private final String alpha = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+	private static final String alpha = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
 	//private final String numeric = "1234567890";
 	private final String special = ". ()";
 	private final String lambda = "/";
@@ -46,6 +46,9 @@ public class Expression {
 		return labels;
 	}
 	
+	public static String getAlpha (){
+		return alpha;
+	}
 	/*	Method to check if an expression is a valid lambda expression.
 	 *  1.) It may only contain the predefined symbols.
 	 *  2.) Parentheses need to match up.
