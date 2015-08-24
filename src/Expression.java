@@ -53,25 +53,7 @@ public class Expression {
 	//Method to remove outermost brackets
 	public String removeOuterBrackets (String expr){
 		String tempExpr = expr;
-		int parenthCount = 0;
 		
-		for (int i = 0; i < tempExpr.length(); i++){
-			if (tempExpr.charAt(i) == '('){
-				parenthCount++;
-			}
-			if (tempExpr.charAt(i) == ')'){
-				parenthCount--;
-			}
-			try{
-				if (tempExpr.charAt(i) == ')' && parenthCount == 0){
-					System.out.println("removeOuterBrackets returned \n" + tempExpr);
-					return tempExpr;
-				}
-			}
-			catch (Exception e){
-				//Do nothing, it might be the closing brace of the expression.
-			}
-		}
 		while (tempExpr.charAt(0) == '('){
 			if (tempExpr.indexOf(')', 1) < tempExpr.indexOf('(', 1)){
 				break;
@@ -79,7 +61,6 @@ public class Expression {
 			if (tempExpr.lastIndexOf(")") == tempExpr.length()- 1){
 				tempExpr = tempExpr.substring (1, tempExpr.length() - 1);
 			}
-			
 		}
 		System.out.println("removeOuterBrackets returned \n" + tempExpr);
 		return tempExpr;
@@ -101,7 +82,6 @@ public class Expression {
 				if (getAlpha().contains(Character.toString(tempExpr.charAt(i+1))) && getAlpha().contains(Character.toString(tempExpr.charAt(i)))){
 					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
 				}
-				
 			}
 			catch (Exception e){
 				//Do nothing, it might be at the end of the string
@@ -127,35 +107,19 @@ public class Expression {
 		System.out.println("insertLambda returned \n" + tempExpr);
 		return tempExpr;
 	}
+	
 	public String removeWhitespace (String expr){
 		String tempExpr = expr;
 		
-		for (int i = 0; i < tempExpr.length(); i++){
-			try{
-				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i+1) == ' '){
-					tempExpr = tempExpr.substring(0, i+1) + tempExpr.substring(i+2);
-					i--;
-				}
-				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i+1) == ')'){
-					tempExpr = tempExpr.substring(0, i) + tempExpr.substring(i+1);
-					i--;
-				}
-				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i-1) != ')'){
-					tempExpr = tempExpr.substring(0, i) + tempExpr.substring(i+1);
-					i--;
-				}
-			}
-			catch (Exception e){
-				//Do nothing, it might be at the end of the string
-			}
-		}
+		tempExpr = tempExpr.replaceAll("\\s+", "");
 		System.out.println("removeWhitespace returned \n" + tempExpr);
 		return tempExpr;
 	}
+	
 	public String autocorrectExpression (String expr){
 		String tempExpr = expr.trim();
-		tempExpr = removeOuterBrackets(tempExpr);
 		tempExpr = removeWhitespace(tempExpr);
+		tempExpr = removeOuterBrackets(tempExpr);
 		tempExpr = insertLambda(tempExpr);
 		tempExpr = insertWhitespace(tempExpr);
 		
@@ -271,10 +235,4 @@ public class Expression {
 		}
 		return true;
 	}
-	
-	//Functionality to be decided
-	/*
-	
-	}
-	*/
 }

@@ -120,7 +120,7 @@ public class Calculator {
 		}
 		
 		//For debugging purposes
-		/*
+		
 		for (int i = 0; i < func.size(); i++){
 			System.out.println("Func");
 			System.out.println(func.get(i));
@@ -129,7 +129,7 @@ public class Calculator {
 			System.out.println("Bound");
 			System.out.println(bound.get(i));
 		}
-		*/
+		
 		
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
