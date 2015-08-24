@@ -49,6 +49,118 @@ public class Expression {
 	public static String getAlpha (){
 		return alpha;
 	}
+	
+	//Method to remove outermost brackets
+	public String removeOuterBrackets (String expr){
+		String tempExpr = expr;
+		int parenthCount = 0;
+		
+		for (int i = 0; i < tempExpr.length(); i++){
+			if (tempExpr.charAt(i) == '('){
+				parenthCount++;
+			}
+			if (tempExpr.charAt(i) == ')'){
+				parenthCount--;
+			}
+			try{
+				if (tempExpr.charAt(i) == ')' && parenthCount == 0){
+					System.out.println("removeOuterBrackets returned \n" + tempExpr);
+					return tempExpr;
+				}
+			}
+			catch (Exception e){
+				//Do nothing, it might be the closing brace of the expression.
+			}
+		}
+		while (tempExpr.charAt(0) == '('){
+			if (tempExpr.indexOf(')', 1) < tempExpr.indexOf('(', 1)){
+				break;
+			}
+			if (tempExpr.lastIndexOf(")") == tempExpr.length()- 1){
+				tempExpr = tempExpr.substring (1, tempExpr.length() - 1);
+			}
+			
+		}
+		System.out.println("removeOuterBrackets returned \n" + tempExpr);
+		return tempExpr;
+	}
+	
+	public String insertWhitespace (String expr){
+		String tempExpr = expr;
+		for (int i = 0; i < tempExpr.length(); i++){
+			try{
+				if (tempExpr.charAt(i) == ')' && (tempExpr.charAt(i+1) == '(' || getAlpha().contains(Character.toString(tempExpr.charAt(i+1))))){
+					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
+				}
+				if (tempExpr.charAt(i) == '(' && getAlpha().contains(Character.toString(tempExpr.charAt(i+1))) && getAlpha().contains(Character.toString(tempExpr.charAt(i+2)))){
+					tempExpr = tempExpr.substring(0, i+2) + " " + tempExpr.substring(i+2);
+				}
+				if (tempExpr.charAt(i+1) == '(' && getAlpha().contains(Character.toString(tempExpr.charAt(i)))){
+					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
+				}
+				if (getAlpha().contains(Character.toString(tempExpr.charAt(i+1))) && getAlpha().contains(Character.toString(tempExpr.charAt(i)))){
+					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
+				}
+				
+			}
+			catch (Exception e){
+				//Do nothing, it might be at the end of the string
+			}
+		}
+		System.out.println("insertWhitespace returned \n" + tempExpr);
+		return tempExpr;
+	}
+	
+	public String insertLambda (String expr){
+		String tempExpr = expr;
+		
+		for (int i = 0; i < tempExpr.length(); i++){
+			try{
+				if (tempExpr.charAt(i) == '/' && getAlpha().contains(Character.toString(tempExpr.charAt(i+2)))){
+					tempExpr = tempExpr.substring(0, i+2) + "./" + tempExpr.substring(i+2);
+				}
+			}
+			catch (Exception e){
+				//Do nothing, it might be at the end of the string
+			}
+		}
+		System.out.println("insertLambda returned \n" + tempExpr);
+		return tempExpr;
+	}
+	public String removeWhitespace (String expr){
+		String tempExpr = expr;
+		
+		for (int i = 0; i < tempExpr.length(); i++){
+			try{
+				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i+1) == ' '){
+					tempExpr = tempExpr.substring(0, i+1) + tempExpr.substring(i+2);
+					i--;
+				}
+				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i+1) == ')'){
+					tempExpr = tempExpr.substring(0, i) + tempExpr.substring(i+1);
+					i--;
+				}
+				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i-1) != ')'){
+					tempExpr = tempExpr.substring(0, i) + tempExpr.substring(i+1);
+					i--;
+				}
+			}
+			catch (Exception e){
+				//Do nothing, it might be at the end of the string
+			}
+		}
+		System.out.println("removeWhitespace returned \n" + tempExpr);
+		return tempExpr;
+	}
+	public String autocorrectExpression (String expr){
+		String tempExpr = expr.trim();
+		tempExpr = removeOuterBrackets(tempExpr);
+		tempExpr = removeWhitespace(tempExpr);
+		tempExpr = insertLambda(tempExpr);
+		tempExpr = insertWhitespace(tempExpr);
+		
+		return tempExpr;
+	}
 	/*	Method to check if an expression is a valid lambda expression.
 	 *  1.) It may only contain the predefined symbols.
 	 *  2.) Parentheses need to match up.
@@ -126,6 +238,9 @@ public class Expression {
 					}
 					break;
 				case ')':
+					if (parenthCount == 0){
+						return false;
+					}
 					parenthCount--;
 					try{
 						if (symbols[i+1] == ' ' || symbols[i+1] == ')'){
@@ -159,9 +274,7 @@ public class Expression {
 	
 	//Functionality to be decided
 	/*
-	public String removeWhitespace (String expr, int index){
-		String tempExpr = expr.substring(index);
-		return tempExpr;
+	
 	}
 	*/
 }
