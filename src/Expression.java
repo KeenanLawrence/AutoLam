@@ -51,7 +51,7 @@ public class Expression {
 	}
 	
 	//Method to remove outermost brackets
-	public String removeOuterBrackets (String expr){
+	public static String removeOuterBrackets (String expr){
 		String tempExpr = expr;
 		int parenthCount = 0;
 		
@@ -72,15 +72,14 @@ public class Expression {
 				//Do nothing, it might be the closing brace of the expression.
 			}
 		}
-		while (tempExpr.charAt(0) == '('){
-			if (tempExpr.indexOf(')', 1) < tempExpr.indexOf('(', 1)){
-				break;
+			while (tempExpr.charAt(0) == '('){
+				if (tempExpr.indexOf(')', 1) < tempExpr.indexOf('(', 1)){
+					break;
+				}
+				if (tempExpr.lastIndexOf(')') == tempExpr.length() - 1){
+					tempExpr = tempExpr.substring (1, tempExpr.length() - 1);
+				}
 			}
-			if (tempExpr.lastIndexOf(")") == tempExpr.length()- 1){
-				tempExpr = tempExpr.substring (1, tempExpr.length() - 1);
-			}
-			
-		}
 		System.out.println("removeOuterBrackets returned \n" + tempExpr);
 		return tempExpr;
 	}
@@ -129,36 +128,16 @@ public class Expression {
 	}
 	public String removeWhitespace (String expr){
 		String tempExpr = expr;
-		
-		for (int i = 0; i < tempExpr.length(); i++){
-			try{
-				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i+1) == ' '){
-					tempExpr = tempExpr.substring(0, i+1) + tempExpr.substring(i+2);
-					i--;
-				}
-				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i+1) == ')'){
-					tempExpr = tempExpr.substring(0, i) + tempExpr.substring(i+1);
-					i--;
-				}
-				if (tempExpr.charAt(i) == ' ' && tempExpr.charAt(i-1) != ')'){
-					tempExpr = tempExpr.substring(0, i) + tempExpr.substring(i+1);
-					i--;
-				}
-			}
-			catch (Exception e){
-				//Do nothing, it might be at the end of the string
-			}
-		}
+		tempExpr.replaceAll("\\s+", "");
 		System.out.println("removeWhitespace returned \n" + tempExpr);
 		return tempExpr;
 	}
 	public String autocorrectExpression (String expr){
 		String tempExpr = expr.trim();
-		tempExpr = removeOuterBrackets(tempExpr);
 		tempExpr = removeWhitespace(tempExpr);
 		tempExpr = insertLambda(tempExpr);
 		tempExpr = insertWhitespace(tempExpr);
-		
+		tempExpr = removeOuterBrackets(tempExpr);
 		return tempExpr;
 	}
 	/*	Method to check if an expression is a valid lambda expression.

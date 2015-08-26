@@ -24,58 +24,71 @@ public class Calculator {
 		return bound;
 	}
 	
+	public boolean isAlpha (char c){
+		if (Expression.getAlpha().contains(Character.toString(c))){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 	//Method to find function names and things that are bound to the function
 	public void findBinding (String e){
 		func = new ArrayList <String> ();
 		bound = new ArrayList <String> ();
-		tempExpr = "";
+		tempExpr = e;
 		
 		//Used to keep track of parentheses
 		int parenthCount = 0;
 		
 		//Variable used for linking functions with its bound variables
 		int index = -1;
-		//Secondary counter to link multiple functions to a set of bound variables
-		int k;
 		
 		//Loop through the entire string and determine what to do 
 		for (int i = 0; i < e.length(); i++){
-			try{
-				//If it's a lambda,
-				if (e.charAt(i) == '/'){
-					index++;
-					//add it to the list of functions
-					func.add(index, Character.toString(e.charAt(i+1)));
+			//If it's a lambda,
+			if (e.charAt(i) == '/'){
+				index++;
+				//Add it to the list of functions
+				func.add(index, Character.toString(e.charAt(i+1)));
 				
-					//Move to the next symbol in the list
-					k=i+1;
-					//If you don't encounter a whitespace,
-					while (e.charAt(k) != ' '){
-						//and the symbol is a lambda, then it's part of the same set of functions that 
-						//the lambda before it was part of. (eg /x./y.x , here x and y are part of the same set
-						//of functions, and they're both binding x
-						if (e.charAt(k) == '/'){
-							//This section is important for regex pattern matching
-							if (e.charAt(k-1) == '('){
-								func.set(index, func.get(index) + ".\\(/" + Character.toString(e.charAt(k+1)));
+				//If you don't encounter a whitespace,
+				while (e.charAt(i+1) != ' '){
+					//and you encounter a lambda
+					if (e.charAt(i+1) == '/'){
+						try{
+							//and the lambda is enclosed in a bracket
+							if (e.charAt(i) == '('){
+								func.add(index+1, Character.toString(e.charAt(i+2)));
 							}
+							//and the lambda is not enclosed in a bracket
 							else{
-								func.set(index, func.get(index) + "./" + Character.toString(e.charAt(k+1)));
+								func.set(index, func.get(index) + "./" + Character.toString(e.charAt(i+2)));
 							}
 						}
-						//If it was a period, determine the things that are bound to it.
-						if (e.charAt(k) == '.'){
-							if (e.charAt(k+2) == ' '){
-								bound.add(index, Character.toString(e.charAt(k+1)));
-							}
-							//If it is enclosed in parentheses, include everything up until that point.
-							else{
-								if (e.charAt(k+1) == '(' && e.charAt(k+2) != '/'){
-									int startBound = k+2;
-									int endBound = k+2;
-									parenthCount = 0;
-									parenthCount++;
-									while (parenthCount != 0){
+						catch (Exception error){
+							//Index out of bounds
+						}
+					}
+					
+					//If it was a period, determine the things that are bound to it.
+					else if (e.charAt(i) == '.'){
+							try{
+								
+								if (e.charAt(i+2) == ' '){
+									System.out.println("Adding " + e.charAt(i+1));
+									bound.add(index, Character.toString(e.charAt(i+1)));
+								
+								}
+								
+								//If it is enclosed in parentheses, include everything up until that point.
+								else{
+									if (e.charAt(i+1) == '('){
+										int startBound = i+2;
+										int endBound = i+2;
+										parenthCount = 0;
+										parenthCount++;
+										while (parenthCount != 0){
 										if (e.charAt(endBound) == '('){
 											parenthCount++;
 										}
@@ -83,26 +96,27 @@ public class Calculator {
 											parenthCount--;
 										}
 										endBound++;
+										}
+										bound.add(index, Expression.removeOuterBrackets(e.substring(startBound, endBound - 1)));
 									}
-									bound.add(index, e.substring(startBound, endBound - 1));
-								}
 								//It also may have occurred towards the end of a section (eg /x.(/y.y))
-								else if (e.charAt(k+2) == ')'){
-									bound.add(index, Character.toString(e.charAt(k+1)));
+									else if (e.charAt(i+2) == ')'){
+										bound.add(index, Character.toString(e.charAt(i+1)));
+									}
+								}
+							}
+							catch (Exception error){
+								if (isAlpha(e.charAt(i+1))){
+									System.out.println("Adding " + e.charAt(i+1));
+									bound.add(index, Character.toString(e.charAt(i+1)));
 								}
 							}
 						}
-						//Move to the next symbol in the list
-						k++;
+					i++;
+					if (i == e.length() - 1){
+						break;
 					}
-					//Move to the next section that will contain a lambda
-					i=k;
-				}
-			}
-			//This catches the index out of bounds for checking for whitespace. All other possibilities are taken care of
-			//by validExpression() in Expression class
-			catch (Exception ex){
-				bound.add(index, Character.toString(e.charAt(i+3)));
+				}			
 			}
 		}
 	}
@@ -120,7 +134,7 @@ public class Calculator {
 		}
 		
 		//For debugging purposes
-		/*
+		
 		for (int i = 0; i < func.size(); i++){
 			System.out.println("Func");
 			System.out.println(func.get(i));
@@ -129,7 +143,7 @@ public class Calculator {
 			System.out.println("Bound");
 			System.out.println(bound.get(i));
 		}
-		*/
+	
 		
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
@@ -163,6 +177,7 @@ public class Calculator {
 		boolean check = false;
 		for (int i = 0; i < func.size(); i++){
 			funcNames [i] = func.get(i);
+			
 		}
 		
 		while (index + 1 < func.size()){

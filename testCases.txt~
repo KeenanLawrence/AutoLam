@@ -7,6 +7,3 @@ Test Cases for alphaConvert()
 (/x.(/y.(x y)) y) z
 (/x./y.(x y))(/x.(x y)) <- replace x with a
 			<- replace y with b
-
-Test Cases for autocorrectExpression()
-(      /    x   y  .    (    x   y    qwe  er  ty  yy    )    )    (   /   x  .  (  x   y)  )
