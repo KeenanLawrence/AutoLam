@@ -64,7 +64,6 @@ public class Expression {
 			}
 			try{
 				if (tempExpr.charAt(i) == ')' && parenthCount == 0){
-					System.out.println("removeOuterBrackets returned \n" + tempExpr);
 					return tempExpr;
 				}
 			}
@@ -80,7 +79,6 @@ public class Expression {
 					tempExpr = tempExpr.substring (1, tempExpr.length() - 1);
 				}
 			}
-		System.out.println("removeOuterBrackets returned \n" + tempExpr);
 		return tempExpr;
 	}
 	
@@ -106,7 +104,6 @@ public class Expression {
 				//Do nothing, it might be at the end of the string
 			}
 		}
-		System.out.println("insertWhitespace returned \n" + tempExpr);
 		return tempExpr;
 	}
 	
@@ -123,13 +120,13 @@ public class Expression {
 				//Do nothing, it might be at the end of the string
 			}
 		}
-		System.out.println("insertLambda returned \n" + tempExpr);
 		return tempExpr;
 	}
 	public String removeWhitespace (String expr){
 		String tempExpr = expr;
 		tempExpr = tempExpr.replaceAll("\\s+", "");
-		System.out.println("removeWhitespace returned \n" + tempExpr);
+		//System.out.println("removeWhitespace returned \n" + tempExpr);
+		//tempExpr.replaceAll("\\s+", "");
 		return tempExpr;
 	}
 	public String autocorrectExpression (String expr){
@@ -250,10 +247,6 @@ public class Expression {
 		}
 		return true;
 	}
-	
-	//Functionality to be decided
-	/*
-	
-	}
-	*/
+
 }
+

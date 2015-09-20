@@ -9,7 +9,6 @@ public class Calculator {
 	//Expression expression;
 	String expression;
 
-
 	public Calculator(String e){
 		func = new ArrayList <String> ();
 		bound = new ArrayList <String> ();
@@ -32,6 +31,7 @@ public class Calculator {
 			return false;
 		}
 	}
+	
 	//Method to find function names and things that are bound to the function
 	public void findBinding (String e){
 		func = new ArrayList <String> ();
@@ -76,7 +76,7 @@ public class Calculator {
 							try{
 								
 								if (e.charAt(i+2) == ' '){
-									System.out.println("Adding " + e.charAt(i+1));
+									//System.out.println("Adding " + e.charAt(i+1));
 									bound.add(index, Character.toString(e.charAt(i+1)));
 								
 								}
@@ -107,7 +107,7 @@ public class Calculator {
 							}
 							catch (Exception error){
 								if (isAlpha(e.charAt(i+1))){
-									System.out.println("Adding " + e.charAt(i+1));
+									//System.out.println("Adding " + e.charAt(i+1));
 									bound.add(index, Character.toString(e.charAt(i+1)));
 								}
 							}
@@ -134,16 +134,16 @@ public class Calculator {
 		}
 		
 		//For debugging purposes
-		
+		/*
 		for (int i = 0; i < func.size(); i++){
-			System.out.println("Func");
+			//System.out.println("Func");
 			System.out.println(func.get(i));
 		}
 		for (int i = 0; i < bound.size(); i++){
-			System.out.println("Bound");
+			//System.out.println("Bound");
 			System.out.println(bound.get(i));
 		}
-	
+		*/
 		
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
@@ -168,59 +168,49 @@ public class Calculator {
 		return tempExpr; 
 	}
 	
-	//TODO
+	//Method to automatically alpha convert an expression
 	public String autoAlphaConvert(String expr){
-		tempExpr = "";
-		findBinding(expr);
-		String funcNames [] = new String [func.size()];
-		int index = 0;
-		boolean check = false;
-		for (int i = 0; i < func.size(); i++){
-			funcNames [i] = func.get(i);
-			
-		}
-		
-		while (index + 1 < func.size()){
-			if (funcNames[index+1].contains(funcNames[index])){
-				check = true;
+		String temp = expr;
+		findBinding(temp);
+		String characterList = Expression.getAlpha();
+		int j = 0;
+		for(int i = 0; i < func.size(); i++){
+			//System.out.println("FOR" + temp + func.get(i));
+			for (int k = 0; k < func.get(i).length(); k = k+3){
+			if ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
+				while ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
+					j++;
+				}
+				temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
+				//System.out.println("IF" + temp + func.get(i));
 			}
-			index++;
+			else{
+				temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
+				//System.out.println("ELSE" + temp + func.get(i));
+				j++;
+			}
+			findBinding(temp);
+			}
 		}
-		if (check){
-			System.out.println("It worked");
-		}
-		return tempExpr;
+		return temp;
 	}
 	
 	//TODO
 	//Works on basic cases
 	public boolean alphaEquivalent (String expr1, String expr2){
-		boolean equiv = false;
-		tempExpr = "";
-		
-		if (expr1.equals(expr2)){
-			return true;
+		boolean equiv;
+		System.out.println(autoAlphaConvert(expr1));
+		System.out.println(autoAlphaConvert(expr2));
+		if (autoAlphaConvert(expr1).equals(autoAlphaConvert(expr2))){
+			equiv = true;
 		}
-		
-		Calculator objCal1 = new Calculator (expr1);
-		Calculator objCal2 = new Calculator (expr2);
-		
-		objCal1.findBinding(expr1);
-		objCal2.findBinding(expr2);
-		List <String> tempFunc1 = objCal1.getFunc();
-		List <String> tempFunc2 = objCal2.getFunc();
-		
-		for (int i = 0; i < tempFunc1.size(); i++){
-			if (!tempFunc1.get(i).contains(tempFunc2.get(i))){
-				for (int k = 0; k < tempFunc2.get(i).length(); k++)
-				if(Expression.getAlpha().contains(Character.toString(tempFunc2.get(i).charAt(k)))){
-					tempExpr = alphaConvert(expr1, Character.toString(tempFunc1.get(i).charAt(i)), Character.toString(tempFunc2.get(i).charAt(k)));
-					break;
-				}
+		else{
+			if (autoAlphaConvert(autoAlphaConvert(expr1)).equals(autoAlphaConvert(autoAlphaConvert(expr2)))){
+				equiv = true;
 			}
-		}
-		if (tempExpr.equals(expr2)){
-			return true;
+			else{
+				equiv = false;
+			}
 		}
 		return equiv;
 	}
@@ -362,5 +352,23 @@ public class Calculator {
 		tempExpr = expr;
 		//TODO
 		return tempExpr;
+	}
+	
+	String fullReduce(String expr){
+		String oldResult=betaReduce(expr);
+		//System.out.println(oldResult);
+		String out = "diverges";
+		int divcount = 0;
+		while(divcount<=20){
+			String newResult = betaReduce(oldResult);
+			if(oldResult.equalsIgnoreCase(newResult)){
+				out = oldResult;
+				break;
+			}
+			oldResult=newResult;
+			//System.out.println(oldResult);
+			divcount++;
+		}
+		return out;
 	}
 }
