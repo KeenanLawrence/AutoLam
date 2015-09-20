@@ -15,14 +15,14 @@ public class TutorialGUI extends JFrame{
 	
 	private static final int DEFAULT_MARK = 3;
 	private JPanel contentPane;
-	private JTextField edtTutMode;
+	private JTextField edtTemplateLocation;
 	private JTextField edtMarkMode;
-	private JTextField edtPenalty;
 	private JTextField edtQFile;
 	private static TutorialGUI frame;
 	private JButton btnMarkingMode;
 	private JButton btnTutorialMode;
 	private JTextArea txtQuestions;
+	private String templateLocation;
 
 	/**
 	 * Launch the application.
@@ -61,11 +61,6 @@ public class TutorialGUI extends JFrame{
 		pnlConfig.setLayout(null);
 		contentPane.add(pnlConfig, "Config");
 		
-		edtPenalty = new JTextField();
-		edtPenalty.setColumns(10);
-		edtPenalty.setBounds(213, 182, 61, 29);
-		pnlConfig.add(edtPenalty);
-		
 		JLabel lblMarkingConfiguration = new JLabel("Marking Configuration");
 		lblMarkingConfiguration.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblMarkingConfiguration.setBounds(279, 29, 240, 29);
@@ -76,7 +71,9 @@ public class TutorialGUI extends JFrame{
 		lblPleaseEnterThe.setBounds(44, 86, 428, 29);
 		pnlConfig.add(lblPleaseEnterThe);
 
-		//back button for configuration page
+		/*
+		 * back button for configuration page
+		 */
 		JButton btnBack = new JButton("Back");
 		btnBack.addActionListener(new ActionListener() {
 			
@@ -98,28 +95,16 @@ public class TutorialGUI extends JFrame{
 				
 				//TODO: check question and tutorial objects have been set up correctly
 				
-				if (edtPenalty.getText().equals("")){
-					JOptionPane.showMessageDialog(null,
-				   "Please enter a penalty.",
-				   "No penalty value",
-				   	JOptionPane.WARNING_MESSAGE);
-				}
-				else{
 					btnMarkingMode.setEnabled(true);
 					btnTutorialMode.setEnabled(true);
 					((CardLayout) contentPane.getLayout()).show(contentPane, "Mode");
 				}
 				
-			}
 		});
 		
 		
 		btnSaveConfig.setBounds(523, 463, 159, 29);
 		pnlConfig.add(btnSaveConfig);
-		
-		JLabel lblNewLabel_2 = new JLabel("Penalty Percentage:");
-		lblNewLabel_2.setBounds(44, 189, 159, 14);
-		pnlConfig.add(lblNewLabel_2);
 		
 		edtQFile = new JTextField();
 		edtQFile.setColumns(10);
@@ -142,7 +127,7 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 				try {
 
 					String line;
-					//int count = 1;
+					int count = 1;
 					br = new BufferedReader(new FileReader(edtQFile.getText()));
 					
 					while ((line = br.readLine()) != null) {
@@ -163,24 +148,7 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 						}
 						
 						
-						txtQuestions.append(expression + "\t" + mark + "\n");
-						
-						/*JLabel lblQuestion1 = new JLabel("(" + count + ") " + line);
-						lblQuestion1.setBounds(10, 25 + (count-1)*25 + 5, 301, 14);
-						//lblQuestion1.setSize(new Dimension(300,14));
-						pnlQuestions.add(lblQuestion1);
-						
-						edtQuestion1 = new JTextField();
-						edtQuestion1.setBounds(321, 22 + (count-1)*25 + 5, 70, 20);
-						pnlQuestions.add(edtQuestion1);
-						edtQuestion1.setColumns(10);
-						edtQuestion1.setText(DEFAULT_MARK + "");
-						count++;
-						
-						//pnlQuestions.validate();
-						pnlQuestions.revalidate();
-						pnlQuestions.repaint();
-						*/
+						txtQuestions.append("(" + count + ") " + expression + "\t" + mark + "\n");
 						
 					}
 
@@ -223,13 +191,13 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		
 		JScrollPane scroll = new JScrollPane (); 
 				  //JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setBounds(44, 264, 663, 175);
+		scroll.setBounds(44, 233, 663, 206);
 		scroll.setViewportView(txtQuestions);
 		pnlConfig.add(scroll);
 		scroll.setVisible(true);
 		
 		JLabel lblConfig = new JLabel("The questions and their mark allocations are displayed below:");
-		lblConfig.setBounds(44, 239, 638, 14);
+		lblConfig.setBounds(44, 195, 638, 14);
 		pnlConfig.add(lblConfig);
 		
 		JPanel pnlMarkMode = new JPanel();
@@ -284,7 +252,11 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		pnlMarkMode.add(scrollMark);
 		scrollMark.setVisible(true);
 		
-		
+	
+		/*
+		 * button to change mode from Mark Mode to Tutorial Mode
+		 * 
+		 */
 		JButton btnChangeModeMark = new JButton("Change Mode");
 		btnChangeModeMark.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -294,6 +266,10 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		btnChangeModeMark.setBounds(491, 506, 213, 29);
 		pnlMarkMode.add(btnChangeModeMark);
 		
+		
+		/*
+		 * button to navigate to marking configuration page
+		 */
 		JButton btnConfig = new JButton("Marking Settings");
 		btnConfig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -307,17 +283,17 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		contentPane.add(pnlTutMode, "Tut");
 		pnlTutMode.setLayout(null);
 		
-		edtTutMode = new JTextField();
-		edtTutMode.setBounds(44, 118, 228, 29);
-		pnlTutMode.add(edtTutMode);
-		edtTutMode.setColumns(10);
+		edtTemplateLocation = new JTextField();
+		edtTemplateLocation.setBounds(44, 118, 228, 29);
+		pnlTutMode.add(edtTemplateLocation);
+		edtTemplateLocation.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("Tutorial Mode");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel.setBounds(295, 27, 228, 29);
 		pnlTutMode.add(lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("Please enter the filepath for the textfile you wish to submit:");
+		JLabel lblNewLabel_1 = new JLabel("Please enter a valid location in which to save your submission:");
 		lblNewLabel_1.setBounds(44, 86, 435, 29);
 		pnlTutMode.add(lblNewLabel_1);
 		
@@ -336,7 +312,7 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		});
 		
 		
-		btnSubmitTut.setBounds(282, 118, 146, 29);
+		btnSubmitTut.setBounds(283, 159, 171, 29);
 		pnlTutMode.add(btnSubmitTut);
 		
 		JLabel lblTutFeedback = new JLabel("Your results are as follows:");
@@ -354,6 +330,9 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		pnlTutMode.add(scrollTut);
 		scrollTut.setVisible(true);
 		
+		/*
+		 * button to change mode from Tutorial Mode to Marking Mode
+		 */
 		
 		JButton btnChangeModeTut = new JButton("Change Mode");
 		btnChangeModeTut.addActionListener(new ActionListener() {
@@ -363,6 +342,62 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		});
 		btnChangeModeTut.setBounds(468, 491, 214, 29);
 		pnlTutMode.add(btnChangeModeTut);
+		
+		/*
+		 * Creates a template for a file of tutorial answers to be submitted 
+		 * (used in the case of a student writing a tutorial)
+		 * 
+		 */
+		JButton btnCreateTemplate = new JButton("Create Template");
+		btnCreateTemplate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				templateLocation = edtTemplateLocation.getText()+"\\template.txt";
+				
+				File template = new File(templateLocation);
+				String text = "";
+				BufferedWriter output = null;
+		        try {
+		            output = new BufferedWriter(new FileWriter(template));
+		            //loop through tutorial object and write question number, question (and mark allocation?) 
+		            //for each question, with blank lines in between 
+		            output.write(text);/////////////////////////////////
+		        } catch ( IOException ex ) {
+		        	//error message
+					JOptionPane.showMessageDialog(null,
+					    "Please enter a valid text file location.",
+					    "Error",
+					    JOptionPane.WARNING_MESSAGE);
+		        } finally {
+		            if ( output != null )
+						try {
+							output.close();
+						} catch (IOException e1) {
+							//error message
+							JOptionPane.showMessageDialog(null,
+							    "Something bad has happened.",
+							    "No text file",
+							    JOptionPane.WARNING_MESSAGE);
+						}
+		        }
+		        
+		        
+		        
+		        //open the text file with the default editor
+		        try {
+					java.awt.Desktop.getDesktop().edit(template);
+				} catch (IOException e1) {
+					//error message
+					JOptionPane.showMessageDialog(null,
+					    "Could not open the text file.",
+					    "Error",
+					    JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+		btnCreateTemplate.setBounds(282, 118, 172, 29);
+		pnlTutMode.add(btnCreateTemplate);
 		
 		JPanel pnlMode = new JPanel();
 		contentPane.add(pnlMode, "Mode");
@@ -375,6 +410,10 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		
 		btnTutorialMode = new JButton("Tutorial Mode");
 		btnTutorialMode.setEnabled(false);
+		
+		/*
+		 * button to navigate to Tutorial Mode
+		 */
 		btnTutorialMode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				((CardLayout) contentPane.getLayout()).show(contentPane, "Tut");
@@ -394,6 +433,13 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		pnlMode.add(btnMarkingMode);
 		
 		JButton btnSetup = new JButton("Setup");
+		
+		/*
+		 * button to navigate to marking configuration from the home screen:
+		 * a tutor must do a setup before any marking can be done: 
+		 * creating questions and saving enables the other two buttons on the homescreen 
+		 */
+		
 		btnSetup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				((CardLayout) contentPane.getLayout()).show(contentPane, "Config");
