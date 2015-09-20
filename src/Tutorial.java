@@ -21,7 +21,7 @@ public class Tutorial {
 			String expr = input.nextLine(); 
 			
 			objExpression = new Expression (expr);
-			objCal = new Calculator (objExpression.getExpression());
+			objCal = new Calculator ();
 			
 			System.out.println();
 			System.out.println("Autocorrecting Expression...");

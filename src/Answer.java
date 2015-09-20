@@ -1,4 +1,4 @@
-import java.util.*;
+//import java.util.*;
 
 public class Answer{
 	Step[] steps;
@@ -6,9 +6,9 @@ public class Answer{
 	int stepcount;
 	int mark;
 	int outof;
-	Calculator c = new Calculator;
+	Calculator c = new Calculator ();
 	
-	public answer(Step[] steps, int stepcount){
+	public Answer(Step[] steps, int stepcount){
 		this.steps = steps;
 		this.feedback = new String[50];
 		this.mark = 0;
@@ -19,7 +19,7 @@ public class Answer{
 	public void markAnswer(){
 		for(int i = 1; i!=stepcount;i++){
 			if(steps[i].isEqual(steps[i-1])==false){
-				mark+=markstep(i);
+				mark+=markStep(i);
 				outof+=3;
 			}
 		}
@@ -28,11 +28,12 @@ public class Answer{
 	
 	public int markStep(int pos){
 		int out = 3;
+		String arg1, arg2, tempLabel="";
 		Step s = steps[pos];
 		Step prevStep = steps[pos-1];
 		//Alpha conversion expected
-		if(s.getType.equalsIgnoreCase("ALPHA")){
-			String tempLabel=s.getLabel();
+		if(s.getType().equalsIgnoreCase("ALPHA")){
+			tempLabel=s.getLabel();
 			if(tempLabel.equalsIgnoreCase("")){
 				out-=1;
 				feedback[pos]+="Line " + pos + ": no label\n";
@@ -55,7 +56,7 @@ public class Answer{
 					
 				}else{				
 					arg1=tempLabel.substring(0, tempLabel.indexOf('|'));
-					arg2=tempLabel.substring(tempLabel.indexOf(|)+1);
+					arg2=tempLabel.substring(tempLabel.indexOf("|")+1);
 					String projectedAns=c.alphaConvert(prevStep.getBody(),arg2,arg1);
 					if(c.alphaEquivalent(projectedAns,s.getBody())==false){
 						out-=1;
@@ -65,8 +66,8 @@ public class Answer{
 			}
 			
 			//Beta reduction expected	
-		}else if(s.getType.equalsIgnoreCase("BETA")){
-			String tempLabel=s.getLabel();
+		}else if(s.getType().equalsIgnoreCase("BETA")){
+			tempLabel=s.getLabel();
 			if(tempLabel.equalsIgnoreCase("")){
 				out-=1;
 				feedback[pos]+="Line " + pos + ": no label\n";
@@ -79,7 +80,7 @@ public class Answer{
 						feedback[pos]+="Line " + pos + ": invalid reduction/conversion\n";
 					}else{
 						arg1=tempLabel.substring(0, tempLabel.indexOf('|'));
-						arg2=tempLabel.substring(tempLabel.indexOf(|)+1);
+						arg2=tempLabel.substring(tempLabel.indexOf("|")+1);
 						String projectedAns=c.alphaConvert(prevStep.getBody(),arg2,arg1);
 						if(c.alphaEquivalent(projectedAns,s.getBody())==false){
 							out-=1;
@@ -106,7 +107,7 @@ public class Answer{
 				}else{
 					if(tempLabel.equalsIgnoreCase("")==false){
 						arg1=tempLabel.substring(0, tempLabel.indexOf('|'));
-						arg2=tempLabel.substring(tempLabel.indexOf(|)+1);
+						arg2=tempLabel.substring(tempLabel.indexOf("|")+1);
 						String projectedAns=c.alphaConvert(prevStep.getBody(),arg2,arg1);
 						if(c.alphaEquivalent(projectedAns,s.getBody())==false){
 							out-=1;
@@ -136,5 +137,4 @@ public class Answer{
 			return false;
 		}
 	}
-	
 }

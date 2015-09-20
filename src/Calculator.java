@@ -4,15 +4,10 @@ public class Calculator {
 	
 	List <String> func; 
 	List <String> bound;
-	
-	String tempExpr;
-	//Expression expression;
-	String expression;
 
-	public Calculator(String e){
+	public Calculator(){
 		func = new ArrayList <String> ();
 		bound = new ArrayList <String> ();
-		tempExpr = "";
 	}
 	
 	public List <String> getFunc (){
@@ -36,7 +31,6 @@ public class Calculator {
 	public void findBinding (String e){
 		func = new ArrayList <String> ();
 		bound = new ArrayList <String> ();
-		tempExpr = e;
 		
 		//Used to keep track of parentheses
 		int parenthCount = 0;
@@ -74,11 +68,9 @@ public class Calculator {
 					//If it was a period, determine the things that are bound to it.
 					else if (e.charAt(i) == '.'){
 							try{
-								
 								if (e.charAt(i+2) == ' '){
 									//System.out.println("Adding " + e.charAt(i+1));
 									bound.add(index, Character.toString(e.charAt(i+1)));
-								
 								}
 								
 								//If it is enclosed in parentheses, include everything up until that point.
@@ -123,7 +115,7 @@ public class Calculator {
 				
 	//The method that does the alpha conversion if given a target and a replacement (called choice)
 	public String alphaConvert (String expr, String target, String choice){
-		tempExpr = "";
+		String tempExpr = "";
 		findBinding(expr);
 		
 		//If the choice of substitution is already in the expression,
@@ -132,18 +124,6 @@ public class Calculator {
 			tempExpr = "Illegal substitution";
 			return tempExpr;
 		}
-		
-		//For debugging purposes
-		/*
-		for (int i = 0; i < func.size(); i++){
-			//System.out.println("Func");
-			System.out.println(func.get(i));
-		}
-		for (int i = 0; i < bound.size(); i++){
-			//System.out.println("Bound");
-			System.out.println(bound.get(i));
-		}
-		*/
 		
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
@@ -175,28 +155,23 @@ public class Calculator {
 		String characterList = Expression.getAlpha();
 		int j = 0;
 		for(int i = 0; i < func.size(); i++){
-			//System.out.println("FOR" + temp + func.get(i));
 			for (int k = 0; k < func.get(i).length(); k = k+3){
-			if ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
-				while ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
+				if ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
+					while ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
+						j++;
+					}
+					temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
+				}
+				else{
+					temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
 					j++;
 				}
-				temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
-				//System.out.println("IF" + temp + func.get(i));
-			}
-			else{
-				temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
-				//System.out.println("ELSE" + temp + func.get(i));
-				j++;
-			}
-			findBinding(temp);
+				findBinding(temp);
 			}
 		}
 		return temp;
 	}
-	
-	//TODO
-	//Works on basic cases
+
 	public boolean alphaEquivalent (String expr1, String expr2){
 		boolean equiv;
 		System.out.println(autoAlphaConvert(expr1));
@@ -215,9 +190,9 @@ public class Calculator {
 		return equiv;
 	}
 	
-	//does what you think it does (actually probably doesn't though)
+	//does what you think it does
 	public String betaReduce (String expr){
-		tempExpr = expr;
+		String tempExpr = expr;
 		int fSpace = findRelevantSpace(expr,0);//this space separates a function from its argument in an application
 		if(fSpace==-1){//case where this is not an application
 			int firstBrace=expr.indexOf('(');
@@ -247,7 +222,7 @@ public class Calculator {
 					argSpace=tempExpr.length();
 					String arg = tempExpr.substring(fSpace+1, argSpace);//extracting the argument
 					//System.out.println("The relevant space is at position " + fSpace + " and the argument is " + arg);
-					String otherArgs = tempExpr.substring(argSpace);//all the arguments after the one we are using
+					//String otherArgs = tempExpr.substring(argSpace);//all the arguments after the one we are using
 					String tempExprBind=expr.substring(0, fSpace);//everything between start and argument
 					//System.out.println("unstripped: " + tempExprBind);
 					tempExprBind = stripUpTo(tempExprBind, fLam+2);//stripped up to the start of the binding
@@ -349,7 +324,7 @@ public class Calculator {
 	}
 	
 	public String etaConvert (String expr){
-		tempExpr = expr;
+		String tempExpr = expr;
 		//TODO
 		return tempExpr;
 	}

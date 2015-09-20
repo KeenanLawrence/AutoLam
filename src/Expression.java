@@ -6,13 +6,11 @@ public class Expression {
 	private String[] labels;
 	
 	//Hard-coded string used to define valid symbols to be used in lambda expressions (should allow for config in final version)
-	private static final String alpha = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
-	//private final String numeric = "1234567890";
+	private static final String ALPHA = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
 	private final String special = ". ()";
 	private final String lambda = "/";
 	
-	//Numeric not included for prototype
-	private final String validSymbols = alpha + special + lambda;
+	private final String validSymbols = ALPHA + special + lambda;
 	
 	//Constructor with labels
 	public Expression (String e, String [] l){
@@ -47,7 +45,7 @@ public class Expression {
 	}
 	
 	public static String getAlpha (){
-		return alpha;
+		return ALPHA;
 	}
 	
 	//Method to remove outermost brackets
@@ -125,8 +123,6 @@ public class Expression {
 	public String removeWhitespace (String expr){
 		String tempExpr = expr;
 		tempExpr = tempExpr.replaceAll("\\s+", "");
-		//System.out.println("removeWhitespace returned \n" + tempExpr);
-		//tempExpr.replaceAll("\\s+", "");
 		return tempExpr;
 	}
 	public String autocorrectExpression (String expr){
@@ -137,6 +133,7 @@ public class Expression {
 		tempExpr = removeOuterBrackets(tempExpr);
 		return tempExpr;
 	}
+	
 	/*	Method to check if an expression is a valid lambda expression.
 	 *  1.) It may only contain the predefined symbols.
 	 *  2.) Parentheses need to match up.
@@ -144,8 +141,6 @@ public class Expression {
 	 *  4.) There cannot be two periods '.' in succession.
 	 *  5.) A lambda cannot come directly before a period.
 	 *  6.) A closing brace cannot come directly after an opening brace.
-	 *  7.) No two spaces in a row.
-	 *  More rules to be added here...
 	 */
 	public boolean validExpression (String expr){
 
@@ -247,6 +242,5 @@ public class Expression {
 		}
 		return true;
 	}
-
 }
 

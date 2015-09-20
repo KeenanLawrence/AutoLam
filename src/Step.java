@@ -1,21 +1,20 @@
-Public class Step{
+public class Step{
 	String type;
 	String body;
 	String label;
 	
-	public step(String type, String body, String label){
+	public Step(String type, String body, String label){
 		this.type=type;
 		this.body=body;
 		this.label=label;
 	}
 	
 	//in the case where the answer is passed as one string
-	public step(String alltext){
+	public Step(String alltext){
 		this.type="";
 		this.body="";
 		this.label="";
 		int bodyIndex=0;
-		
 		
 		int firstSpace = alltext.indexOf(' ');
 		String temp = alltext.substring(0, firstSpace);
@@ -31,8 +30,6 @@ Public class Step{
 		}else{
 			this.body=alltext.substring(bodyIndex);
 		}
-		
-		
 	}
 	
 	public String getType(){
@@ -54,8 +51,4 @@ Public class Step{
 			return false;
 		}
 	}
-	
-	
-	
-	
 }
