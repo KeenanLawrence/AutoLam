@@ -128,7 +128,7 @@ public class Expression {
 	}
 	public String removeWhitespace (String expr){
 		String tempExpr = expr;
-		tempExpr.replaceAll("\\s+", "");
+		tempExpr = tempExpr.replaceAll("\\s+", "");
 		System.out.println("removeWhitespace returned \n" + tempExpr);
 		return tempExpr;
 	}
