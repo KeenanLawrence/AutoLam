@@ -17,6 +17,9 @@ public class Step{
 		int bodyIndex=0;
 		
 		int firstSpace = alltext.indexOf(' ');
+		if(firstSpace==-1){
+			firstSpace=alltext.length();
+		}
 		String temp = alltext.substring(0, firstSpace);
 		if(temp.equalsIgnoreCase("ALPHA")||temp.equalsIgnoreCase("BETA")||temp.equalsIgnoreCase("ETA")){
 			this.type=temp;
@@ -25,8 +28,9 @@ public class Step{
 		
 		if(alltext.charAt(alltext.length()-1)==']'){
 			int labelIndex=alltext.lastIndexOf('[');
-			this.label=alltext.substring(labelIndex);
+			this.label=alltext.substring(labelIndex+1,alltext.length()-1);
 			this.body=alltext.substring(bodyIndex, labelIndex-1);
+			//System.out.println("here, the label is " + this.label + " and the body is " + this.body);
 		}else{
 			this.body=alltext.substring(bodyIndex);
 		}
@@ -49,6 +53,18 @@ public class Step{
 			return true;
 		}else{
 			return false;
+		}
+	}
+	
+	public String toString(){
+		String labelstr="";
+		if(this.label.equalsIgnoreCase("")==false){
+			labelstr=" ["+ this.label+"]";
+		}
+		if(this.type.equalsIgnoreCase("")){
+			return this.body + labelstr;
+		}else{
+			return this.type+" "+ this.body + labelstr;
 		}
 	}
 }
