@@ -36,15 +36,17 @@ public class Calculator {
 		int parenthCount = 0;
 		
 		//Variable used for linking functions with its bound variables
-		int index = -1;
+		int index = 0;
 		
 		//Loop through the entire string and determine what to do 
 		for (int i = 0; i < e.length(); i++){
 			//If it's a lambda,
+			System.out.println("Index is at " + index);
 			if (e.charAt(i) == '/'){
-				index++;
+				
 				//Add it to the list of functions
 				func.add(index, Character.toString(e.charAt(i+1)));
+				System.out.println("Adding func " + e.charAt(i+1) + " at index " + index);
 				
 				//If you don't encounter a whitespace,
 				while (e.charAt(i+1) != ' '){
@@ -54,6 +56,7 @@ public class Calculator {
 							//and the lambda is enclosed in a bracket
 							if (e.charAt(i) == '('){
 								func.add(index+1, Character.toString(e.charAt(i+2)));
+								System.out.println("Adding func " + e.charAt(i+2) + " at index " + index);
 							}
 							//and the lambda is not enclosed in a bracket
 							else{
@@ -69,7 +72,7 @@ public class Calculator {
 					else if (e.charAt(i) == '.'){
 							try{
 								if (e.charAt(i+2) == ' '){
-									//System.out.println("Adding " + e.charAt(i+1));
+									System.out.println("Adding " + e.charAt(i+1) + " at index " + index);
 									bound.add(index, Character.toString(e.charAt(i+1)));
 								}
 								
@@ -90,25 +93,30 @@ public class Calculator {
 										endBound++;
 										}
 										bound.add(index, Expression.removeOuterBrackets(e.substring(startBound, endBound - 1)));
+										System.out.println("Adding " + Expression.removeOuterBrackets(e.substring(startBound, endBound - 1)) +" bound in parenth at index " + index);
+										break;
 									}
 								//It also may have occurred towards the end of a section (eg /x.(/y.y))
 									else if (e.charAt(i+2) == ')'){
+										System.out.println("Adding " + e.charAt(i+1) + " at index " + index);
 										bound.add(index, Character.toString(e.charAt(i+1)));
 									}
 								}
 							}
 							catch (Exception error){
 								if (isAlpha(e.charAt(i+1))){
-									//System.out.println("Adding " + e.charAt(i+1));
+									System.out.println("Adding (Exception)" + e.charAt(i+1) + " at index " + index);
 									bound.add(index, Character.toString(e.charAt(i+1)));
 								}
 							}
 						}
+					
 					i++;
 					if (i == e.length() - 1){
 						break;
 					}
-				}			
+				}
+				index++;
 			}
 		}
 	}
@@ -125,6 +133,14 @@ public class Calculator {
 			return tempExpr;
 		}
 		
+		for (int i = 0; i < func.size(); i++){
+			System.out.println("Func & Bound");
+			System.out.println(func.get(i) + " & " + bound.get(i));
+		}
+		for (int i = 0; i < bound.size(); i++){
+			System.out.println("Bound");
+			System.out.println(bound.get(i));
+		}
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
 			if (func.get(i).contains(target) && bound.get(i).contains(target)){
