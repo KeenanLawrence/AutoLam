@@ -1,18 +1,16 @@
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.io.*;
-
-import java.util.*;
-
 
 public class TutorialGUI extends JFrame{
 	
+	private static final long serialVersionUID = -8483105505159387371L;
 	private static final int DEFAULT_MARK = 3;
 	private JPanel contentPane;
 	private JTextField edtTemplateLocation;
@@ -102,7 +100,6 @@ public class TutorialGUI extends JFrame{
 				
 		});
 		
-		
 		btnSaveConfig.setBounds(523, 463, 159, 29);
 		pnlConfig.add(btnSaveConfig);
 		
@@ -111,7 +108,7 @@ public class TutorialGUI extends JFrame{
 		edtQFile.setBounds(44, 126, 228, 29);
 		pnlConfig.add(edtQFile);
 		
-JButton btnMakeQuestions = new JButton("Create Questions");
+		JButton btnMakeQuestions = new JButton("Create Questions");
 		
 		/*
 		 * Button in making configuration to make questions from a text file
@@ -125,7 +122,6 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 				BufferedReader br = null;
 
 				try {
-
 					String line;
 					int count = 1;
 					br = new BufferedReader(new FileReader(edtQFile.getText()));
@@ -146,10 +142,7 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 							expression = line.substring(0, line.indexOf('['));
 							mark = Integer.parseInt(line.substring(line.indexOf('[')+1, line.indexOf(']')));
 						}
-						
-						
 						txtQuestions.append("(" + count + ") " + expression + "\t" + mark + "\n");
-						
 					}
 
 				} catch (IOException e) {
@@ -169,16 +162,11 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 						    JOptionPane.WARNING_MESSAGE);
 					}
 				}
-				
-				
+		
 				//TODO: create tutorial object with question/answer attributes
-				
-				
-				
-				
+
 			}//end of actionperformed definition
 		});//end of eventhandler
-		
 		
 		btnMakeQuestions.setBounds(317, 126, 159, 29);
 		pnlConfig.add(btnMakeQuestions);
@@ -233,8 +221,6 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 			}//end of actionPerformed
 		});
 		
-		
-		
 		btnSubmitMark.setBounds(295, 118, 166, 29);
 		pnlMarkMode.add(btnSubmitMark);
 		
@@ -251,7 +237,6 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		scrollMark.setViewportView(textAreaMarkMode);
 		pnlMarkMode.add(scrollMark);
 		scrollMark.setVisible(true);
-		
 	
 		/*
 		 * button to change mode from Mark Mode to Tutorial Mode
@@ -265,7 +250,6 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		});
 		btnChangeModeMark.setBounds(491, 506, 213, 29);
 		pnlMarkMode.add(btnChangeModeMark);
-		
 		
 		/*
 		 * button to navigate to marking configuration page
@@ -311,7 +295,6 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 			}
 		});
 		
-		
 		btnSubmitTut.setBounds(283, 159, 171, 29);
 		pnlTutMode.add(btnSubmitTut);
 		
@@ -352,7 +335,6 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		btnCreateTemplate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
 				templateLocation = edtTemplateLocation.getText()+"\\template.txt";
 				
 				File template = new File(templateLocation);
@@ -381,8 +363,6 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 							    JOptionPane.WARNING_MESSAGE);
 						}
 		        }
-		        
-		        
 		        
 		        //open the text file with the default editor
 		        try {
@@ -447,8 +427,7 @@ JButton btnMakeQuestions = new JButton("Create Questions");
 		});
 		btnSetup.setBounds(255, 229, 163, 32);
 		pnlMode.add(btnSetup);
-	
-		
+
 	 //set the initial page.
 		((CardLayout) contentPane.getLayout()).show(contentPane, "Mode");
 	}

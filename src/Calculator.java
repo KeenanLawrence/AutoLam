@@ -1,23 +1,20 @@
+//Import necessary packages
 import java.util.*;
 
+//Class definition
 public class Calculator {
 	
+	//Instance variables
 	List <String> func; 
 	List <String> bound;
 
+	//Constructor mainly used to access methods
 	public Calculator(){
 		func = new ArrayList <String> ();
 		bound = new ArrayList <String> ();
 	}
 	
-	public List <String> getFunc (){
-		return func;
-	}
-	
-	public List <String> getBound(){
-		return bound;
-	}
-	
+	//Method checks if a character is in the list of defined alpha characters
 	public boolean isAlpha (char c){
 		if (Expression.getAlpha().contains(Character.toString(c))){
 			return true;
@@ -29,6 +26,7 @@ public class Calculator {
 	
 	//Method to find function names and things that are bound to the function
 	public void findBinding (String e){
+		//Empty the contents of the lists
 		func = new ArrayList <String> ();
 		bound = new ArrayList <String> ();
 		
@@ -41,13 +39,11 @@ public class Calculator {
 		//Loop through the entire string and determine what to do 
 		for (int i = 0; i < e.length(); i++){
 			//If it's a lambda,
-			//System.out.println("Index is at " + index);
 			if (e.charAt(i) == '/'){
 				
 				//Add it to the list of functions
 				func.add(index, Character.toString(e.charAt(i+1)));
-				//System.out.println("Adding func " + e.charAt(i+1) + " at index " + index);
-				
+
 				//If you don't encounter a whitespace,
 				while (e.charAt(i+1) != ' '){
 					//and you encounter a lambda
@@ -56,7 +52,6 @@ public class Calculator {
 							//and the lambda is enclosed in a bracket
 							if (e.charAt(i) == '('){
 								func.add(index+1, Character.toString(e.charAt(i+2)));
-								//System.out.println("Adding func " + e.charAt(i+2) + " at index " + index);
 							}
 							//and the lambda is not enclosed in a bracket
 							else{
@@ -72,7 +67,6 @@ public class Calculator {
 					else if (e.charAt(i) == '.'){
 							try{
 								if (e.charAt(i+2) == ' '){
-									//System.out.println("Adding " + e.charAt(i+1) + " at index " + index);
 									bound.add(index, Character.toString(e.charAt(i+1)));
 								}
 								
@@ -93,10 +87,9 @@ public class Calculator {
 										endBound++;
 										}
 										bound.add(index, Expression.removeOuterBrackets(e.substring(startBound, endBound - 1)));
-										//System.out.println("Adding " + Expression.removeOuterBrackets(e.substring(startBound, endBound - 1)) +" bound in parenth at index " + index);
-										break;
+										break;//Exit the while loop and start again, because indexing may get mixed up
 									}
-								//It also may have occurred towards the end of a section (eg /x.(/y.y))
+									//It also may have occurred towards the end of a section (eg /x.(/y.y))
 									else if (e.charAt(i+2) == ')'){
 										//System.out.println("Adding " + e.charAt(i+1) + " at index " + index);
 										bound.add(index, Character.toString(e.charAt(i+1)));
@@ -105,17 +98,20 @@ public class Calculator {
 							}
 							catch (Exception error){
 								if (isAlpha(e.charAt(i+1))){
-									//System.out.println("Adding (Exception)" + e.charAt(i+1) + " at index " + index);
+									//For simple expressions, like /x.x
 									bound.add(index, Character.toString(e.charAt(i+1)));
 								}
 							}
 						}
+					//Moves to the next character because we're still in the loop
+					i++; 
 					
-					i++;
+					//Break out of the while loop if we've reached the end of the string
 					if (i == e.length() - 1){
 						break;
 					}
 				}
+				//Moves the index of both func and bound lists, as they're associated with each other
 				index++;
 			}
 		}
@@ -133,14 +129,6 @@ public class Calculator {
 			return tempExpr;
 		}
 		
-		for (int i = 0; i < func.size(); i++){
-			//System.out.println("Func & Bound");
-			//System.out.println(func.get(i) + " & " + bound.get(i));
-		}
-		for (int i = 0; i < bound.size(); i++){
-			//System.out.println("Bound");
-			//System.out.println(bound.get(i));
-		}
 		//Checks if the variable to replace is a function
 		for (int i = 0; i < func.size(); i++){
 			if (func.get(i).contains(target) && bound.get(i).contains(target)){
@@ -165,45 +153,49 @@ public class Calculator {
 	}
 	
 	//Method to automatically alpha convert an expression
+	//It does this by changing everything it can legally change, to "unused" characters.
 	public String autoAlphaConvert(String expr){
 		String temp = expr;
 		findBinding(temp);
+		
+		//Variable used for neater code
 		String characterList = Expression.getAlpha();
-		int j = 0;
+		int j = 0; //Used as an index for the characterList
+		
+		//Go through the list of lambdas
 		for(int i = 0; i < func.size(); i++){
+			//If there was multiple lambdas in one index, go through it
 			for (int k = 0; k < func.get(i).length(); k = k+3){
+				//If an alpha conversion fails with the first character,
 				if ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
 					while ((alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j))).equals ("Illegal substitution"))){
-						j++;
+						j++; //keep trying until something works
 					}
+					//When it works, save it to the temporary variable
 					temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
 				}
+				//If it didn't fail, go ahead
 				else{
 					temp = alphaConvert(temp, Character.toString(func.get(i).charAt(k)), Character.toString(characterList.charAt(j)));
-					j++;
+					j++; //but move to the next character in characterList
 				}
+				//Rework the binding, because the expression we're working with has changed
 				findBinding(temp);
 			}
 		}
 		return temp;
 	}
 
+	//Method checks for alpha equivalence.
 	public boolean alphaEquivalent (String expr1, String expr2){
-		boolean equiv;
-		//System.out.println(autoAlphaConvert(expr1));
-		//System.out.println(autoAlphaConvert(expr2));
+		//If the two auto alpha conversions are the same, then okay...
 		if (autoAlphaConvert(expr1).equals(autoAlphaConvert(expr2))){
-			equiv = true;
+			return true;
 		}
+		//Otherwise, there're likely to be wrong
 		else{
-			if (autoAlphaConvert(autoAlphaConvert(expr1)).equals(autoAlphaConvert(autoAlphaConvert(expr2)))){
-				equiv = true;
-			}
-			else{
-				equiv = false;
-			}
+			return false;
 		}
-		return equiv;
 	}
 	
 	//does what you think it does
@@ -339,6 +331,7 @@ public class Calculator {
 		return out;
 	}
 	
+	//Unimplemented method
 	public String etaConvert (String expr){
 		String tempExpr = expr;
 		//TODO
