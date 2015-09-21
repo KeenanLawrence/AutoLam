@@ -54,16 +54,23 @@ public class Tutorial {
 						}
 						break;
 					case 3:
-						objCal.autoAlphaConvert(objExpression.getExpression());
+						System.out.println(objCal.autoAlphaConvert(objExpression.getExpression()));
 						break;
 					case 4:
 						System.out.println("Enter the second expression: ");
 						String expr2 = input.nextLine();
-						if (objCal.alphaEquivalent(objExpression.getExpression(), expr2)){
+						expr2 = objExpression.autocorrectExpression(expr2);
+						if (objExpression.validExpression(expr2)){
+							System.out.println("Valid expression\n");
+							if (objCal.alphaEquivalent(objExpression.getExpression(), expr2)){
 							System.out.println("The expressions are equivalent");
+							}
+							else{
+							System.out.println("The expressions are not equivalent");
+							}
 						}
 						else{
-							System.out.println("The expressions are not equivalent");
+							System.out.println("The expression was invalid");
 						}
 				}
 			}

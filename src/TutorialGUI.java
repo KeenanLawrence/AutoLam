@@ -158,6 +158,7 @@ public class TutorialGUI extends JFrame{
 							expression = line.substring(0, line.indexOf('['));
 							mark = Integer.parseInt(line.substring(line.indexOf('[')+1, line.indexOf(']')));
 						}
+
 						Expression e = new Expression(expression);
 						Question q = new Question(e,mark);
 						if(!q.check()){
@@ -170,6 +171,9 @@ public class TutorialGUI extends JFrame{
 						
 						txtQuestions.append(count + ". " + expression + "\t" + mark + "\n");
 						count++;
+
+						txtQuestions.append("(" + count + ") " + expression + "\t" + mark + "\n");
+
 					}
 
 				} catch (IOException e) {
@@ -422,7 +426,10 @@ public class TutorialGUI extends JFrame{
 		btnCreateTemplate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+
 				//this will be used again later for marking when the student submits
+
+
 				templateLocation = edtTemplateLocation.getText()+"\\template.txt";
 				
 				File template = new File(templateLocation);
