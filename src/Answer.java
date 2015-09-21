@@ -20,7 +20,7 @@ public class Answer{
 	}
 	
 	public void markAnswer(){
-		for(int i = 1; i!=stepcount;i++){
+		for(int i = 1; i<stepcount;i++){
 			if(steps[i].isEqual(steps[i-1])==false){
 				mark+=markStep(i);
 				outof+=3;
@@ -62,10 +62,15 @@ public class Answer{
 					arg1=tempLabel.substring(0, tempLabel.indexOf('|'));
 					arg2=tempLabel.substring(tempLabel.indexOf('|')+1);
 					String projectedAns=c.alphaConvert(prevStep.getBody(),arg2,arg1);
+					//if(Expression.autoCorrectExpression(projectedAns).equalsIgnoreCase(Expression.autocorrectExpression(s.getBody()))==false){
 					if(projectedAns.equalsIgnoreCase(s.getBody())==false){
 						out-=1;
 						feedback[pos]+="Line " + pos + ": label does not match alpha conversion\n";
-					}									
+					}else if (c.alphaConvert(projectedAns,arg2,getOtherLetter(arg2)).equalsIgnoreCase("Illegal substitution")){
+						out = 0;
+						outof -= 3;
+						feedback[pos]+="Line " + pos +": redundant conversion\n";
+					}
 				}
 			}
 			
@@ -89,9 +94,14 @@ public class Answer{
 						arg1=tempLabel.substring(0, tempLabel.indexOf('|'));
 						arg2=tempLabel.substring(tempLabel.indexOf('|')+1);
 						String projectedAns=c.alphaConvert(prevStep.getBody(),arg2,arg1);
-						if(c.alphaEquivalent(projectedAns,s.getBody())==false){
+						//if(Expression.autoCorrectExpression(projectedAns).equalsIgnoreCase(Expression.autocorrectExpression(s.getBody()))==false){
+						if(projectedAns.equalsIgnoreCase(s.getBody())==false){
 							out-=1;
 							feedback[pos]+="Line " + pos + ": label does not match alpha conversion\n";
+						}else if (c.alphaConvert(projectedAns,arg2,getOtherLetter(arg2)).equalsIgnoreCase("Illegal substitution")){
+							out = 0;
+							outof -= 3;
+							feedback[pos]+="Line " + pos +": redundant conversion\n";
 						}
 					}
 					
@@ -122,9 +132,14 @@ public class Answer{
 						arg1=tempLabel.substring(0, tempLabel.indexOf('|'));
 						arg2=tempLabel.substring(tempLabel.indexOf('|')+1);
 						String projectedAns=c.alphaConvert(prevStep.getBody(),arg2,arg1);
-						if(c.alphaEquivalent(projectedAns,s.getBody())==false){
+						//if(Expression.autoCorrectExpression(projectedAns).equalsIgnoreCase(Expression.autocorrectExpression(s.getBody()))==false){
+						if(projectedAns.equalsIgnoreCase(s.getBody())==false){
 							out-=1;
 							feedback[pos]+="Line " + pos + ": label does not match alpha conversion\n";
+						}else if (c.alphaConvert(projectedAns,arg2,getOtherLetter(arg2)).equalsIgnoreCase("Illegal substitution")){
+							out = 0;
+							outof -= 3;
+							feedback[pos]+="Line " + pos +": redundant conversion\n";
 						}
 					}
 				}				
@@ -163,4 +178,24 @@ public class Answer{
 		}
 		return out;
 	}
+	
+	public float percentage(){
+		float m = this.mark;
+		float o = this.outof;
+		if(o==0){
+			return 0;
+		}else{
+			return m/o*100;
+		}
+	}
+	
+	//the most ridiculous method I've ever written
+	public String getOtherLetter(String lett){
+		if(lett.charAt(0)=='a'){
+			return "b";
+		}else{
+			return "a";
+		}
+	}
+	
 }

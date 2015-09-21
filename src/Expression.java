@@ -1,49 +1,32 @@
-
+//Class definition
 public class Expression {
 	
-	//Instance variables
+	//Instance variable
 	private String expression;
-	private String[] labels;
-	
-	//Hard-coded string used to define valid symbols to be used in lambda expressions (should allow for config in final version)
-	private static final String ALPHA = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+
+	//Hard-coded string used to define valid symbols to be used in lambda expressions
+	private static final String ALPHA = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm";
 	private final String special = ". ()";
 	private final String lambda = "/";
 	
 	private final String validSymbols = ALPHA + special + lambda;
 	
-	//Constructor with labels
-	public Expression (String e, String [] l){
-		setExpression(e);
-		setLabels(l);
-	}
-	
-	//Constructor without labels (used in prototype)
+	//Constructor sets expression
 	public Expression (String e){
 		setExpression(e.trim());
 	}
 	
+	//Mutator method to set expression
 	public void setExpression (String e){
 		expression = e;
 	}
 	
-	public void setLabels (String [] l){
-		int length = l.length;
-		labels = new String [length];
-		
-		for (int i = 0; i < length; i++){
-			labels[i] = l[i];
-		}
-	}
-	
+	//Accessor method used to get expression
 	public String getExpression(){
 		return expression;
 	}
 	
-	public String [] getLables(){
-		return labels;
-	}
-	
+	//Accessor method used to get a list of valid alpha characters
 	public static String getAlpha (){
 		return ALPHA;
 	}
@@ -51,49 +34,53 @@ public class Expression {
 	//Method to remove outermost brackets
 	public static String removeOuterBrackets (String expr){
 		String tempExpr = expr;
-		int parenthCount = 0;
-		
-		for (int i = 0; i < tempExpr.length(); i++){
-			if (tempExpr.charAt(i) == '('){
-				parenthCount++;
+
+		//If the expression starts with a bracket,
+		while (tempExpr.charAt(0) == '('){
+			//but there's a closing bracket before an opening bracket,
+			if (tempExpr.indexOf(')', 1) < tempExpr.indexOf('(', 1)){
+				//do nothing because the closing bracket isn't at the end of the expression, eg. (/x.x y) (/z.z a)
+				break; 
 			}
-			if (tempExpr.charAt(i) == ')'){
-				parenthCount--;
+			
+			//Otherwise, remove the outer brackets and check that new string again
+			if (tempExpr.lastIndexOf(')') == tempExpr.length() - 1){
+				tempExpr = tempExpr.substring (1, tempExpr.length() - 1);
 			}
-			try{
-				if (tempExpr.charAt(i) == ')' && parenthCount == 0){
-					return tempExpr;
-				}
-			}
-			catch (Exception e){
-				//Do nothing, it might be the closing brace of the expression.
+			else{
+				//Stop if there is no bracket on the end, eg. (/x.x) y
+				break;
 			}
 		}
-			while (tempExpr.charAt(0) == '('){
-				if (tempExpr.indexOf(')', 1) < tempExpr.indexOf('(', 1)){
-					break;
-				}
-				if (tempExpr.lastIndexOf(')') == tempExpr.length() - 1){
-					tempExpr = tempExpr.substring (1, tempExpr.length() - 1);
-				}
-			}
 		return tempExpr;
 	}
 	
+	//A method to insert whitespace at appropriate places
+	//This is important for the betaReduce method in the Calculator class
 	public String insertWhitespace (String expr){
 		String tempExpr = expr;
+		
+		//Loop through the string and insert a space if:
 		for (int i = 0; i < tempExpr.length(); i++){
 			try{
+				//There are two brackets next to each other, )( or there is a closing brace and an alpha character, )a
 				if (tempExpr.charAt(i) == ')' && (tempExpr.charAt(i+1) == '(' || getAlpha().contains(Character.toString(tempExpr.charAt(i+1))))){
 					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
 				}
+				//There is an opening bracket with two alpha characters after it, (ab
 				if (tempExpr.charAt(i) == '(' && getAlpha().contains(Character.toString(tempExpr.charAt(i+1))) && getAlpha().contains(Character.toString(tempExpr.charAt(i+2)))){
 					tempExpr = tempExpr.substring(0, i+2) + " " + tempExpr.substring(i+2);
 				}
+				//There is an alpha character followed by an opening bracket, a(
 				if (tempExpr.charAt(i+1) == '(' && getAlpha().contains(Character.toString(tempExpr.charAt(i)))){
 					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
 				}
+				//There are two alpha characters in succession, ab
 				if (getAlpha().contains(Character.toString(tempExpr.charAt(i+1))) && getAlpha().contains(Character.toString(tempExpr.charAt(i)))){
+					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
+				}
+				//There is an alpha character followed by a lambda
+				if (getAlpha().contains(Character.toString(tempExpr.charAt(i))) && tempExpr.charAt(i+1) == '/'){
 					tempExpr = tempExpr.substring(0, i+1) + " " + tempExpr.substring(i+1);
 				}
 				
@@ -105,11 +92,15 @@ public class Expression {
 		return tempExpr;
 	}
 	
+	//A method to insert a lambda into the expression
+	//This method is important for the alphaConvert and betaReduce methods in the Calculator class
 	public String insertLambda (String expr){
 		String tempExpr = expr;
 		
+		//Cycle through the string,
 		for (int i = 0; i < tempExpr.length(); i++){
 			try{
+				//and if you find a lambda and the second character after the lambda is an alpha, then it's also a function
 				if (tempExpr.charAt(i) == '/' && getAlpha().contains(Character.toString(tempExpr.charAt(i+2)))){
 					tempExpr = tempExpr.substring(0, i+2) + "./" + tempExpr.substring(i+2);
 				}
@@ -120,11 +111,16 @@ public class Expression {
 		}
 		return tempExpr;
 	}
+	
+	//A method to remove all whitespace from an expression
 	public String removeWhitespace (String expr){
 		String tempExpr = expr;
 		tempExpr = tempExpr.replaceAll("\\s+", "");
 		return tempExpr;
 	}
+	
+	//This method auto-corrects the expression based on the above methods.
+	//The order in which they execute is important
 	public String autocorrectExpression (String expr){
 		String tempExpr = expr.trim();
 		tempExpr = removeWhitespace(tempExpr);
@@ -142,8 +138,8 @@ public class Expression {
 	 *  5.) A lambda cannot come directly before a period.
 	 *  6.) A closing brace cannot come directly after an opening brace.
 	 */
-	public boolean validExpression (String expr){
-
+	public boolean validExpression (){
+		String expr = this.expression;
 		//Keeps track of how many opening and closing braces there are.
 		//If the count is positive, there's excess opening braces. Zero for equality, negative for excess closing braces. 
 		int parenthCount = 0;
@@ -151,6 +147,7 @@ public class Expression {
 		//Breaks the expression into a collection of symbols
 		char [] symbols = new char [expr.length()];
 		
+		//If there's an invalid symbol anywhere, stop checking
 		for (int i = 0; i < expr.length(); i++){
 			symbols [i] = expr.charAt(i);
 			if (!validSymbols.contains(Character.toString(symbols[i]))){
@@ -163,7 +160,7 @@ public class Expression {
 			return false;
 		}
 		
-		//If it is, check that the rest of the expression is valid
+		//If it is, check that the rest of the expression is valid, based on the six rules above
 		for (int i = 0; i < symbols.length; i++){
 				switch (symbols[i]){
 				case '/':
@@ -241,6 +238,10 @@ public class Expression {
 			return false;
 		}
 		return true;
+	}
+	
+	public String toString(){
+		return this.expression;
 	}
 }
 
