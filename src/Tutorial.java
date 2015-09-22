@@ -26,8 +26,9 @@ public class Tutorial {
 			System.out.println();
 			System.out.println("Autocorrecting Expression...");
 			objExpression.setExpression(objExpression.autocorrectExpression(expr));
+			System.out.println(objExpression.getExpression());
 			
-			if (objExpression.validExpression(objExpression.getExpression()) == true){
+			if (objExpression.validExpression() == true){
 				System.out.println ("Valid expression");
 				
 				System.out.println();
@@ -59,19 +60,13 @@ public class Tutorial {
 					case 4:
 						System.out.println("Enter the second expression: ");
 						String expr2 = input.nextLine();
-						expr2 = objExpression.autocorrectExpression(expr2);
-						if (objExpression.validExpression(expr2)){
-							System.out.println("Valid expression\n");
-							if (objCal.alphaEquivalent(objExpression.getExpression(), expr2)){
+						if (objCal.alphaEquivalent(objExpression.getExpression(), expr2)){
 							System.out.println("The expressions are equivalent");
-							}
-							else{
-							System.out.println("The expressions are not equivalent");
-							}
 						}
 						else{
-							System.out.println("The expression was invalid");
+							System.out.println("The expressions are not equivalent");
 						}
+					
 				}
 			}
 			else{

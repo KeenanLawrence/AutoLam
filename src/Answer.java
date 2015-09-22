@@ -30,9 +30,11 @@ public class Answer{
 	
 	
 	public int markStep(int pos){
+		
 		int out = 3;
 		String arg1, arg2, tempLabel="";
 		Step s = steps[pos];
+		//System.out.println("Marking step " + s.getBody());
 		Step prevStep = steps[pos-1];
 		System.out.println(pos+"."+s.toString());
 		//Alpha conversion expected
@@ -61,9 +63,10 @@ public class Answer{
 				}else{				
 					arg1=tempLabel.substring(0, tempLabel.indexOf('|'));
 					arg2=tempLabel.substring(tempLabel.indexOf('|')+1);
-					String projectedAns=c.alphaConvert(prevStep.getBody(),arg2,arg1);
+					System.out.println(prevStep.getBody() +"," + arg2 + "," + arg1);
+					String projectedAns=c.alphaConvert(Expression.autocorrectExpression(prevStep.getBody()),arg2,arg1);
 					//if(Expression.autoCorrectExpression(projectedAns).equalsIgnoreCase(Expression.autocorrectExpression(s.getBody()))==false){
-					if(projectedAns.equalsIgnoreCase(s.getBody())==false){
+					if(projectedAns.equalsIgnoreCase(Expression.autocorrectExpression(s.getBody()))==false){
 						out-=1;
 						feedback[pos]+="Line " + pos + ": label does not match alpha conversion\n";
 					}else if (c.alphaConvert(projectedAns,arg2,getOtherLetter(arg2)).equalsIgnoreCase("Illegal substitution")){
@@ -149,9 +152,14 @@ public class Answer{
 	}
 	
 	public boolean isCorrectBetaReduction(String first, String second){
+		//System.out.println("We're standing here in correct beta reduction check");
 		if(c.alphaEquivalent(first,second)==false){
+			//System.out.println("\nReducing: "+first);
 			String fnform = c.fullReduce(first);
+			System.out.println(fnform);
+			//System.out.println("\nReducing: "+second);
 			String snform = c.fullReduce(second);
+			System.out.println(snform);
 			return(c.alphaEquivalent(fnform,snform));
 		}else{
 			return false;

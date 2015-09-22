@@ -13,7 +13,7 @@ public class Expression {
 	
 	//Constructor sets expression
 	public Expression (String e){
-		setExpression(e.trim());
+		setExpression(autocorrectExpression(e));
 	}
 	
 	//Mutator method to set expression
@@ -57,7 +57,7 @@ public class Expression {
 	
 	//A method to insert whitespace at appropriate places
 	//This is important for the betaReduce method in the Calculator class
-	public String insertWhitespace (String expr){
+	public static String insertWhitespace (String expr){
 		String tempExpr = expr;
 		
 		//Loop through the string and insert a space if:
@@ -94,7 +94,7 @@ public class Expression {
 	
 	//A method to insert a lambda into the expression
 	//This method is important for the alphaConvert and betaReduce methods in the Calculator class
-	public String insertLambda (String expr){
+	public static String insertLambda (String expr){
 		String tempExpr = expr;
 		
 		//Cycle through the string,
@@ -113,7 +113,7 @@ public class Expression {
 	}
 	
 	//A method to remove all whitespace from an expression
-	public String removeWhitespace (String expr){
+	public static String removeWhitespace (String expr){
 		String tempExpr = expr;
 		tempExpr = tempExpr.replaceAll("\\s+", "");
 		return tempExpr;
@@ -121,14 +121,37 @@ public class Expression {
 	
 	//This method auto-corrects the expression based on the above methods.
 	//The order in which they execute is important
-	public String autocorrectExpression (String expr){
+	public static String autocorrectExpression (String expr){
 		String tempExpr = expr.trim();
 		tempExpr = removeWhitespace(tempExpr);
 		tempExpr = insertLambda(tempExpr);
 		tempExpr = insertWhitespace(tempExpr);
-		tempExpr = removeOuterBrackets(tempExpr);
+		//tempExpr = removeOuterBrackets(tempExpr);
+		tempExpr = putInBrackets(tempExpr);
 		return tempExpr;
 	}
+	
+	public static String putInBrackets(String expr){
+		Calculator c = new Calculator();
+		for(int i = 0; i!= expr.length();i++){
+			if (expr.charAt(i) == '.' && expr.charAt(i+1) == '(' ){
+				
+			}
+			else if(expr.charAt(i)=='(' && expr.charAt(i+1)=='/' && expr.charAt(i+4)!='('){
+				if(expr.charAt(i)=='(' && expr.charAt(i+1)=='/' && expr.charAt(i+4)!=')'){
+					
+				
+				expr = expr.substring(0,i+4)+"("+expr.substring(i+4, c.findMatchingBrace(expr,i))+")"+expr.substring(c.findMatchingBrace(expr,i));
+				}
+			}
+			else if (expr.charAt(i) == '.' && expr.charAt(i+1) == '/'){
+				expr = expr.substring(0, i+1) + "(" + expr.substring(i+1) + ")";
+			}
+		}
+		return expr;
+	}
+	
+	
 	
 	/*	Method to check if an expression is a valid lambda expression.
 	 *  1.) It may only contain the predefined symbols.
